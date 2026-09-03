@@ -282,6 +282,26 @@ function initFormLocking() {
     });
 }
 
+// Tombol salin kode resi. Bila clipboard API ditolak browser, teks kode tetap
+// terlihat di layar sehingga pemohon masih bisa menyalinnya manual.
+function initCopyButtons() {
+    document.querySelectorAll('[data-copy-button]').forEach((button) => {
+        button.addEventListener('click', async () => {
+            const value = button.dataset.copyValue;
+            if (!value || !navigator.clipboard) return;
+
+            try {
+                await navigator.clipboard.writeText(value);
+                const original = button.textContent;
+                button.textContent = 'Tersalin!';
+                setTimeout(() => { button.textContent = original; }, 1500);
+            } catch {
+                // Diamkan: pemohon masih bisa menyalin manual dari layar.
+            }
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-slider]').forEach(initSlider);
     initCountUp();
@@ -289,4 +309,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initGalleryLightbox();
     initDropzones();
     initFormLocking();
+    initCopyButtons();
 });

@@ -13,6 +13,21 @@ use Illuminate\Validation\ValidationException;
 
 class ApplicationController extends Controller
 {
+    /** Halaman bukti pengajuan. Kode resi hanya datang dari session sekali pakai. */
+    public function selesai()
+    {
+        $kode = session('receipt_code');
+
+        if (! $kode) {
+            return redirect()->route('lacak.index');
+        }
+
+        return view('permohonan.selesai', [
+            'kode' => $kode,
+            'layanan' => session('service_title'),
+        ]);
+    }
+
     /** Formulir pengajuan satu layanan. */
     public function create(Form $form)
     {

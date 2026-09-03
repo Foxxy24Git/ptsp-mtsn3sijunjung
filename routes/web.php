@@ -30,8 +30,10 @@ Route::post('/layanan/{form:slug}/ajukan', [ApplicationController::class, 'store
     ->middleware('throttle:5,60')
     ->name('layanan.kirim');
 
-// Stub sementara; diganti halaman bukti pengajuan sungguhan di Task 9.
-Route::get('/permohonan/selesai', fn () => response('Selesai', 200))->name('permohonan.selesai');
+Route::get('/permohonan/selesai', [ApplicationController::class, 'selesai'])->name('permohonan.selesai');
+
+// Stub sementara; diganti halaman lacak sungguhan di Task 10.
+Route::get('/lacak', fn () => response('Lacak', 200))->name('lacak.index');
 
 // Halaman statis by slug (catch-all satu segmen) — WAJIB paling akhir.
 // Regex mengecualikan segmen "admin", "up", "form", "layanan", "lacak", &
