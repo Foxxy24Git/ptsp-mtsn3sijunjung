@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Form;
+use App\Models\Menu;
 use App\Models\WorkUnit;
 use Illuminate\Database\Seeder;
 
@@ -116,5 +117,16 @@ class PtspServiceSeeder extends Seeder
                 ]);
             }
         }
+
+        // Menu publik. firstOrCreate berdasarkan target supaya operator boleh
+        // mengganti label atau urutannya tanpa dikembalikan seeder.
+        Menu::firstOrCreate(
+            ['target' => '/layanan'],
+            ['label' => 'Layanan', 'type' => 'url', 'sort_order' => 10],
+        );
+        Menu::firstOrCreate(
+            ['target' => '/lacak'],
+            ['label' => 'Lacak Permohonan', 'type' => 'url', 'sort_order' => 20],
+        );
     }
 }

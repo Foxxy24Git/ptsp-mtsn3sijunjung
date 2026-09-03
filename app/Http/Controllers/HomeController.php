@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Form;
 use App\Models\GalleryItem;
 use App\Models\LeaderQuote;
 use App\Models\Post;
@@ -67,6 +68,17 @@ class HomeController extends Controller
             ->filter(fn (GalleryItem $item): bool => $item->isPhoto() ? $item->imageUrl() !== null : $item->youtubeId() !== null)
             ->values();
 
-        return view('home', compact('slides', 'stats', 'leader', 'pendampings', 'posts', 'galleryItems'));
+        $semuaLayanan = Form::query()
+            ->services()
+            ->published()
+            ->ordered()
+            ->with('workUnit')
+            ->get();
+
+        // Nomor kartu tetap global walau beranda hanya menampilkan enam teratas.
+        $nomorLayanan = $semuaLayanan->pluck('id')->flip()->map(fn (int $index): int => $index + 1);
+        $layananUnggulan = $semuaLayanan->take(6);
+
+        return view('home', compact('slides', 'stats', 'leader', 'pendampings', 'posts', 'galleryItems', 'layananUnggulan', 'nomorLayanan'));
     }
 }

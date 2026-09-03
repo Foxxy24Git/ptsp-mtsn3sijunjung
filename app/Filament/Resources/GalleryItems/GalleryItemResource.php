@@ -20,6 +20,13 @@ class GalleryItemResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPhoto;
 
+    /**
+     * Modul bawaan CMS-web yang tidak dipakai PTSP. Sengaja disembunyikan,
+     * bukan dihapus: menghapusnya berarti menyentuh migrasi, seeder, dan
+     * layout beranda sekaligus. Pembersihan dijadwalkan terpisah.
+     */
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationLabel = 'Galeri';
 
     protected static ?string $modelLabel = 'Item Galeri';

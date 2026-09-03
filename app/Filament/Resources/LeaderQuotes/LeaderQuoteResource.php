@@ -20,6 +20,13 @@ class LeaderQuoteResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserCircle;
 
+    /**
+     * Modul bawaan CMS-web yang tidak dipakai PTSP. Sengaja disembunyikan,
+     * bukan dihapus: menghapusnya berarti menyentuh migrasi, seeder, dan
+     * layout beranda sekaligus. Pembersihan dijadwalkan terpisah.
+     */
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationLabel = 'Pimpinan';
 
     protected static ?string $modelLabel = 'Pimpinan';

@@ -27,6 +27,13 @@
                 @endif
                 @break
 
+            @case('layanan')
+                {{-- Layanan PTSP. Hanya tampil bila ada layanan yang sudah terbit. --}}
+                @if ($layananUnggulan->isNotEmpty())
+                    @include('partials.layanan')
+                @endif
+                @break
+
             @case('stats')
                 {{-- Statistik kampus (count-up + hover-fill). Hanya tampil bila ada statistik aktif. --}}
                 @if ($stats->isNotEmpty())

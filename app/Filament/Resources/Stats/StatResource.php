@@ -20,6 +20,13 @@ class StatResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedChartBar;
 
+    /**
+     * Modul bawaan CMS-web yang tidak dipakai PTSP. Sengaja disembunyikan,
+     * bukan dihapus: menghapusnya berarti menyentuh migrasi, seeder, dan
+     * layout beranda sekaligus. Pembersihan dijadwalkan terpisah.
+     */
+    protected static bool $shouldRegisterNavigation = false;
+
     protected static ?string $navigationLabel = 'Statistik';
 
     protected static ?string $modelLabel = 'Statistik';

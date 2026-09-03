@@ -52,6 +52,7 @@ class GeneralSettings extends Settings
      */
     public const HOME_SECTIONS = [
         'hero' => 'Hero / Slider',
+        'layanan' => 'Layanan PTSP',
         'stats' => 'Statistik',
         'leader' => 'Pimpinan',
         'pendamping' => 'Pendamping / Waka',
