@@ -6,22 +6,23 @@ use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
-class AdminUserSeeder extends Seeder
+class PetugasUserSeeder extends Seeder
 {
     /**
-     * Seed satu user Administrator default.
+     * Seed satu akun Petugas demo untuk pengujian manual lokal.
      *
      * Idempotent: aman dijalankan berulang (updateOrCreate berdasarkan email).
-     * Kredensial default WAJIB diganti setelah deploy ke client.
+     * Akun petugas sungguhan dibuat Administrator lewat resource "Kelola
+     * Petugas" di panel admin — seeder ini murni kemudahan pengujian lokal.
      */
     public function run(): void
     {
         User::updateOrCreate(
-            ['email' => 'admin@sekolah.test'],
+            ['email' => 'petugas@sekolah.test'],
             [
-                'name' => 'Administrator',
+                'name' => 'Petugas Demo',
                 'password' => Hash::make('password'),
-                'role' => User::ROLE_ADMINISTRATOR,
+                'role' => User::ROLE_PETUGAS,
                 'email_verified_at' => now(),
             ],
         );
