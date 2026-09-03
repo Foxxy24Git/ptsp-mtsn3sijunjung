@@ -38,7 +38,12 @@ class PermohonanResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return FormSubmissionsTable::configure($table);
+        // toolbarActions([]) MENIMPA (bukan menambah) — ini sengaja
+        // menghapus aksi "Export CSV" milik admin dari FormSubmissionsTable
+        // tanpa mengubah class itu sama sekali. Ekspor seluruh data
+        // permohonan adalah kebutuhan pelaporan admin, bukan bagian dari
+        // "memproses permohonan" yang diminta untuk petugas (spec §2.4).
+        return FormSubmissionsTable::configure($table)->toolbarActions([]);
     }
 
     public static function getPages(): array
