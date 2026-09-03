@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Resources\Forms\FormResource;
 use App\Models\Form;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -23,12 +24,16 @@ class ServiceResourceTest extends TestCase
             ->assertDontSee('Form Kontak Biasa');
     }
 
-    public function test_halaman_edit_layanan_bisa_dibuka(): void
+    public function test_tautan_edit_dari_daftar_bisa_dibuka(): void
     {
+        // Diakses lewat FormResource::getUrl(), persis URL yang benar-benar
+        // dihasilkan Filament untuk tombol Edit di tabel -- bukan ditebak
+        // manual (mis. "{id}/edit") yang bisa menyimpang dari perilaku nyata
+        // dan gagal menangkap regresi seperti mismatch route key binding.
         $layanan = Form::create(['title' => 'SPP Legalisasi', 'slug' => 'legalisasi', 'status' => 'published']);
 
         $this->actingAs(User::factory()->create())
-            ->get("/admin/forms/{$layanan->id}/edit")
+            ->get(FormResource::getUrl('edit', ['record' => $layanan]))
             ->assertOk()
             ->assertSee('Informasi Layanan')
             ->assertSee('Rincian &amp; Syarat', false)
