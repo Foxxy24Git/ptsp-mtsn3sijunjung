@@ -578,6 +578,14 @@ class PermohonanResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    /**
+     * Wajib eksplisit: nama kelas ini akan dijamakkan Filament dengan aturan
+     * bahasa Inggris ("Permohonans"), yang tidak cocok dengan nama folder
+     * ("Permohonan") dan berakhir membuat URL dobel (`/permohonan/permohonans`)
+     * kalau dibiarkan otomatis.
+     */
+    protected static ?string $slug = 'permohonan';
+
     protected static ?string $navigationLabel = 'Permohonan';
 
     protected static ?string $modelLabel = 'Permohonan';
@@ -634,6 +642,7 @@ use App\Filament\Petugas\Resources\Permohonan\Pages\ListPermohonan;
 use App\Models\Form;
 use App\Models\FormSubmission;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -641,6 +650,17 @@ use Tests\TestCase;
 class PetugasUbahStatusTest extends TestCase
 {
     use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        // Livewire::test() memanggil komponen langsung tanpa melalui rute
+        // HTTP /petugas/..., jadi Filament tidak tahu panel mana yang aktif
+        // kecuali diberi tahu eksplisit — tanpa ini, resource mencoba
+        // membangun URL ke panel default (admin) dan gagal.
+        Filament::setCurrentPanel('petugas');
+    }
 
     private function permohonan(): FormSubmission
     {
