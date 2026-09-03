@@ -1055,10 +1055,13 @@ class ServiceCatalogTest extends TestCase
         // "SPP Mutasi Masuk" adalah layanan ke-3 pada urutan penuh. Saat katalog
         // disaring ke Kesiswaan ia menjadi satu-satunya hasil, tapi nomornya
         // harus tetap #3 — bukan #1 — supaya bisa dirujuk secara lisan.
+        // Dicocokkan lewat markup badge persis (bukan '#1' polos), karena
+        // '#1' juga muncul sebagai substring kode warna hex (mis. #111827)
+        // pada <style> bawaan layout.
         $this->get('/layanan?unit=kesiswaan')
             ->assertOk()
-            ->assertSee('#3')
-            ->assertDontSee('#1');
+            ->assertSee('>#3<', false)
+            ->assertDontSee('>#1<', false);
     }
 
     public function test_chip_satuan_kerja_ditampilkan(): void
