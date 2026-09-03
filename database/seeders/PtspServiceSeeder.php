@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Form;
-use App\Models\Menu;
 use App\Models\WorkUnit;
 use Illuminate\Database\Seeder;
 
@@ -118,15 +117,9 @@ class PtspServiceSeeder extends Seeder
             }
         }
 
-        // Menu publik. firstOrCreate berdasarkan target supaya operator boleh
-        // mengganti label atau urutannya tanpa dikembalikan seeder.
-        Menu::firstOrCreate(
-            ['target' => '/layanan'],
-            ['label' => 'Layanan', 'type' => 'url', 'sort_order' => 10],
-        );
-        Menu::firstOrCreate(
-            ['target' => '/lacak'],
-            ['label' => 'Lacak Permohonan', 'type' => 'url', 'sort_order' => 20],
-        );
+        // Sengaja TIDAK menambah menu "Layanan"/"Lacak Permohonan" ke
+        // navigasi atas — beranda sudah menyediakan pintu masuknya sendiri
+        // (section Layanan PTSP dan kotak pencarian kode resi), jadi tautan
+        // nav jadi redundan. Halaman /layanan & /lacak tetap aktif penuh.
     }
 }

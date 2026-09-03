@@ -46,11 +46,14 @@ class PtspNavigationTest extends TestCase
             ->assertSee('SPP Surat Pengganti Ijazah Rusak');
     }
 
-    public function test_seeder_menambahkan_menu_layanan_dan_lacak(): void
+    public function test_seeder_tidak_menambahkan_menu_layanan_dan_lacak(): void
     {
+        // Sengaja tidak dimunculkan di menu navigasi atas — beranda sudah
+        // menyediakan pintu masuknya sendiri (section Layanan PTSP dan
+        // kotak pencarian kode resi), jadi tautan di nav jadi redundan.
         $this->seed(PtspServiceSeeder::class);
 
-        $this->assertTrue(Menu::where('target', '/layanan')->exists());
-        $this->assertTrue(Menu::where('target', '/lacak')->exists());
+        $this->assertFalse(Menu::where('target', '/layanan')->exists());
+        $this->assertFalse(Menu::where('target', '/lacak')->exists());
     }
 }
