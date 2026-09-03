@@ -239,3 +239,30 @@
         transition: none;
     }
 }
+
+/* ==========================================================================
+   Area unggah berkas (dropzone) pada formulir pengajuan PTSP.
+   Markup di resources/views/partials/field-input.blade.php.
+   Tanpa JavaScript, input file bawaan tetap tampil dan berfungsi; kelas
+   .is-enhanced baru dipasang JS setelah tarik-lepas siap.
+   ========================================================================== */
+@layer components {
+    .dropzone.is-enhanced .dropzone__input {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .dropzone.is-enhanced .dropzone__idle,
+    .dropzone.is-enhanced .dropzone__filled {
+        display: block;
+    }
+
+    .dropzone.is-dragging {
+        border-color: var(--color-primary);
+        background-color: color-mix(in srgb, var(--color-primary) 12%, transparent);
+    }
+}

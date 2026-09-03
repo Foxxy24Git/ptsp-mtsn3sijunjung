@@ -208,9 +208,85 @@ function initGalleryLightbox() {
     });
 }
 
+// Area unggah berkas (dropzone) pada formulir pengajuan PTSP: tarik-lepas +
+// umpan balik nama berkas setelah dipilih. Markup: partials/field-input.blade.php.
+// Tanpa umpan balik, pemohon tidak yakin berkasnya benar-benar terpilih.
+function initDropzones() {
+    document.querySelectorAll('[data-dropzone]').forEach((zone) => {
+        const input = zone.querySelector('input[type="file"]');
+        const idle = zone.querySelector('[data-dropzone-idle]');
+        const filled = zone.querySelector('[data-dropzone-filled]');
+        const nameEl = zone.querySelector('[data-dropzone-name]');
+        const clearBtn = zone.querySelector('[data-dropzone-clear]');
+
+        if (!input || !idle || !filled || !nameEl) return;
+
+        zone.classList.add('is-enhanced');
+
+        const render = () => {
+            const file = input.files && input.files[0];
+            if (file) {
+                const mb = (file.size / 1024 / 1024).toFixed(2);
+                nameEl.textContent = `${file.name} (${mb} MB)`;
+            }
+            idle.hidden = Boolean(file);
+            filled.hidden = !file;
+        };
+
+        input.addEventListener('change', render);
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', () => {
+                input.value = '';
+                render();
+            });
+        }
+
+        ['dragenter', 'dragover'].forEach((event) => {
+            zone.addEventListener(event, (e) => {
+                e.preventDefault();
+                zone.classList.add('is-dragging');
+            });
+        });
+
+        ['dragleave', 'drop'].forEach((event) => {
+            zone.addEventListener(event, (e) => {
+                e.preventDefault();
+                zone.classList.remove('is-dragging');
+            });
+        });
+
+        zone.addEventListener('drop', (e) => {
+            if (e.dataTransfer && e.dataTransfer.files.length > 0) {
+                input.files = e.dataTransfer.files;
+                render();
+            }
+        });
+
+        render();
+    });
+}
+
+// Kunci tombol kirim setelah diklik supaya permohonan tidak terkirim dua kali
+// saat koneksi lambat dan pemohon menekan tombol berulang kali.
+function initFormLocking() {
+    document.querySelectorAll('[data-locking-form]').forEach((form) => {
+        form.addEventListener('submit', () => {
+            const button = form.querySelector('[data-submit-button]');
+            const label = form.querySelector('[data-submit-label]');
+            if (!button || button.disabled) return;
+
+            button.disabled = true;
+            if (label) label.textContent = 'Mengirim...';
+        });
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-slider]').forEach(initSlider);
     initCountUp();
     initReveal();
     initGalleryLightbox();
+    initDropzones();
+    initFormLocking();
 });

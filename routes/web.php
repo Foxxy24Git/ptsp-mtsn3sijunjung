@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ApplicationController;
 use App\Http\Controllers\FormController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeController;
@@ -24,7 +25,8 @@ Route::post('/form/{form:slug}', [FormController::class, 'submit'])->name('forms
 // Layanan PTSP. Wajib didefinisikan sebelum catch-all halaman statis.
 Route::get('/layanan', [ServiceController::class, 'index'])->name('layanan.index');
 Route::get('/layanan/{form:slug}', [ServiceController::class, 'show'])->name('layanan.show');
-Route::get('/layanan/{form:slug}/ajukan', fn () => abort(404))->name('layanan.ajukan');
+Route::get('/layanan/{form:slug}/ajukan', [ApplicationController::class, 'create'])->name('layanan.ajukan');
+Route::post('/layanan/{form:slug}/ajukan', fn () => abort(404))->name('layanan.kirim');
 
 // Halaman statis by slug (catch-all satu segmen) — WAJIB paling akhir.
 // Regex mengecualikan segmen "admin", "up", "form", "layanan", "lacak", &
