@@ -1,6 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
+    @include('partials.lacak-search')
+
     {{-- Urutan & visibilitas section diatur admin via home_sections. Tiap
          section tetap punya guard "data ada": toggle admin menyembunyikan
          manual, data kosong menyembunyikan otomatis. --}}

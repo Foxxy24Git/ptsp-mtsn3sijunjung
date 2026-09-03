@@ -8,9 +8,15 @@ use Illuminate\Http\Request;
 
 class TrackingController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return view('lacak.index', ['permohonan' => null]);
+        // Kotak pencarian di beranda hanya minta kode resi, lalu mengarah
+        // ke sini lewat query string supaya field-nya sudah terisi — pemohon
+        // tinggal mengetik 4 digit WA untuk melengkapi verifikasi.
+        return view('lacak.index', [
+            'permohonan' => null,
+            'kodeResiAwal' => $request->query('receipt_code', ''),
+        ]);
     }
 
     public function cari(Request $request)

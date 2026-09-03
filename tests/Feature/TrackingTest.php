@@ -39,6 +39,26 @@ class TrackingTest extends TestCase
             ->assertSee('Kode Resi');
     }
 
+    public function test_beranda_menampilkan_kotak_pencarian_kode_resi(): void
+    {
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('Lacak Status Permohonan')
+            ->assertSee('Ketik Kode Resi', false);
+    }
+
+    public function test_kotak_pencarian_beranda_mengarah_ke_halaman_lacak(): void
+    {
+        $this->get('/')->assertSee(route('lacak.index'), false);
+    }
+
+    public function test_kode_resi_dari_query_beranda_mengisi_field_di_halaman_lacak(): void
+    {
+        $this->get('/lacak?receipt_code=PTSP-2609-A7K3QX')
+            ->assertOk()
+            ->assertSee('value="PTSP-2609-A7K3QX"', false);
+    }
+
     public function test_kombinasi_benar_menampilkan_status_dan_timeline(): void
     {
         $this->permohonan();

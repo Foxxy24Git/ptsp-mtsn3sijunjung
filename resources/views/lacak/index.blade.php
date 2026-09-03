@@ -23,7 +23,7 @@
             <div class="grid gap-4 sm:grid-cols-3">
                 <div class="sm:col-span-2">
                     <label for="receipt_code" class="block text-sm font-medium text-gray-700">Kode Resi</label>
-                    <input id="receipt_code" type="text" name="receipt_code" value="{{ old('receipt_code') }}" required
+                    <input id="receipt_code" type="text" name="receipt_code" value="{{ old('receipt_code', $kodeResiAwal ?? '') }}" required
                            placeholder="PTSP-2609-A7K3QX"
                            class="mt-1.5 block w-full rounded-lg border border-gray-300 px-3 py-2.5 font-mono uppercase text-gray-900 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary">
                 </div>
