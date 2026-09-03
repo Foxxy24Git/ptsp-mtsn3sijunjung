@@ -1072,6 +1072,13 @@ class PetugasResource extends Resource
 
     protected static ?int $navigationSort = 40;
 
+    /**
+     * Ditentukan eksplisit karena nama kelas Indonesia ("Petugas") tidak bisa
+     * diandalkan mengikuti aturan jamak otomatis Filament (lihat catatan di
+     * App\Filament\Petugas\Resources\Permohonan\PermohonanResource).
+     */
+    protected static ?string $slug = 'petugas';
+
     protected static ?string $navigationLabel = 'Petugas';
 
     protected static ?string $modelLabel = 'Petugas';
