@@ -76,6 +76,25 @@
                 @endforeach
             </nav>
 
+            {{-- Tautan staf: masuk atau ke dashboard petugas. Selalu tampil
+                 (desktop & mobile) — bukan bagian dari menu konten seperti
+                 $navMenus, karena itu ditempatkan terpisah dari <nav>. --}}
+            @php $petugasUser = auth()->user(); @endphp
+            <a href="{{ url('/petugas') }}"
+               class="flex items-center gap-1.5 rounded-md px-2.5 py-2 text-sm font-medium text-[var(--header-fg)] hover:bg-[var(--header-hover)]"
+               aria-label="{{ $petugasUser && $petugasUser->role === \App\Models\User::ROLE_PETUGAS ? 'Dashboard Petugas' : 'Masuk Petugas' }}">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                </svg>
+                <span class="hidden sm:inline">
+                    @if ($petugasUser && $petugasUser->role === \App\Models\User::ROLE_PETUGAS)
+                        Dashboard Petugas — {{ $petugasUser->name }}
+                    @else
+                        Masuk Petugas
+                    @endif
+                </span>
+            </a>
+
             {{-- Toggle menu mobile (tanpa JS, memakai <details>) --}}
             <details class="relative md:hidden">
                 <summary class="flex cursor-pointer list-none items-center rounded-md p-2 text-[var(--header-fg)] hover:bg-[var(--header-hover)] [&::-webkit-details-marker]:hidden">

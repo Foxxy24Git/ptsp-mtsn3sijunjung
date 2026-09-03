@@ -460,6 +460,26 @@ class PetugasPanelAccessTest extends TestCase
             ->assertSee('PTSP-2609-A7K3QX')
             ->assertSee('Budi Santoso');
     }
+
+    public function test_petugas_tidak_melihat_tombol_export_csv(): void
+    {
+        // FormSubmissionsTable (dipakai ulang dari admin) punya toolbar
+        // Export CSV bawaan — resource petugas sengaja menghapusnya
+        // (spec §2.4), jadi ini pengaman supaya perubahan tak sengaja pada
+        // PermohonanResource tidak mengembalikannya diam-diam.
+        $this->actingAs(User::factory()->create(['role' => User::ROLE_PETUGAS]))
+            ->get('/petugas/permohonan')
+            ->assertOk()
+            ->assertDontSee('Export CSV');
+    }
+
+    public function test_admin_tetap_melihat_tombol_export_csv(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => User::ROLE_ADMINISTRATOR]))
+            ->get('/admin/form-submissions')
+            ->assertOk()
+            ->assertSee('Export CSV');
+    }
 }
 ```
 
@@ -594,7 +614,12 @@ class PermohonanResource extends Resource
 
     public static function table(Table $table): Table
     {
-        return FormSubmissionsTable::configure($table);
+        // toolbarActions([]) MENIMPA (bukan menambah) — ini sengaja
+        // menghapus aksi "Export CSV" milik admin dari FormSubmissionsTable
+        // tanpa mengubah class itu sama sekali. Ekspor seluruh data
+        // permohonan adalah kebutuhan pelaporan admin, bukan bagian dari
+        // "memproses permohonan" yang diminta untuk petugas (spec §2.4).
+        return FormSubmissionsTable::configure($table)->toolbarActions([]);
     }
 
     public static function getPages(): array
@@ -627,7 +652,7 @@ class ListPermohonan extends ListRecords
 - [ ] **Step 7: Jalankan test akses untuk memastikan lulus**
 
 Run: `php artisan test --filter=PetugasPanelAccessTest`
-Expected: PASS — 5 test lulus.
+Expected: PASS — 7 test lulus.
 
 - [ ] **Step 8: Tulis test Ubah Status & Tolak yang gagal**
 
@@ -1298,7 +1323,7 @@ sleep 3
 curl -s http://127.0.0.1:8123/ | grep -c 'Masuk Petugas'
 kill %1
 ```
-Expected: `1`
+Expected: `2` (teks yang sama muncul di `aria-label` dan di `<span>` yang terlihat — bukan duplikasi tautan, cuma dua atribut/elemen berbeda yang sama-sama membawa teksnya).
 
 - [ ] **Step 6: Jalankan seluruh test dan commit**
 
