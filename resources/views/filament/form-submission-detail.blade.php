@@ -71,7 +71,13 @@
         font-size: .6875rem; font-weight: 600; text-transform: uppercase; letter-spacing: .04em;
         color: #9ca3af; margin-bottom: .25rem;
     }
-    .pd-field-value { font-size: .875rem; color: #111827; word-break: break-word; white-space: pre-wrap; }
+    .pd-field-value { font-size: .875rem; color: #111827; word-break: break-word; }
+    /* pre-line HANYA di sini (bukan di .pd-field-value): kalau dipasang di
+       div pembungkus yang isinya blok kondisional Blade bercabang, spasi
+       & baris baru dari indentasi kode ikut "dilestarikan" sebagai baris
+       kosong sungguhan — itulah penyebab WhatsApp/Email dulu turun jauh
+       dari labelnya. Dibatasi ke elemen yang isinya cuma nilai itu sendiri. */
+    .pd-multiline { white-space: pre-line; }
     .pd-empty { color: #9ca3af; font-style: italic; }
 
     .pd-link {
@@ -204,7 +210,7 @@
                         @elseif (is_array($value))
                             {{ $value === [] ? '—' : implode(', ', $value) }}
                         @elseif ($value !== null && $value !== '')
-                            {{ $value }}
+                            <span class="pd-multiline">{{ $value }}</span>
                         @else
                             <span class="pd-empty">—</span>
                         @endif
