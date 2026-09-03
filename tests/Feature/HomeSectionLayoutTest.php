@@ -89,17 +89,58 @@ class HomeSectionLayoutTest extends TestCase
     public function test_default_settings_render_original_order(): void
     {
         // Tanpa mengubah apa pun (pakai default migration), urutan asli beranda
-        // harus tetap: hero -> layanan. Menjaga jaminan "tampilan default
-        // tidak berubah sampai admin mengaturnya".
+        // harus tetap: lacak -> hero -> layanan. Menjaga jaminan "tampilan
+        // default tidak berubah sampai admin mengaturnya".
         $this->makeLayanan();
 
         $content = $this->get('/')->assertOk()->getContent();
 
+        $posLacak = strpos($content, 'Lacak Status Permohonan Anda');
         $posHero = strpos($content, 'Selamat Datang di');
         $posLayanan = strpos($content, 'Layanan PTSP');
 
+        $this->assertNotFalse($posLacak);
         $this->assertNotFalse($posHero);
         $this->assertNotFalse($posLayanan);
+        $this->assertLessThan($posHero, $posLacak, 'lacak harus sebelum hero');
         $this->assertLessThan($posLayanan, $posHero, 'hero harus sebelum layanan');
+    }
+
+    public function test_lacak_section_dapat_disembunyikan(): void
+    {
+        $this->setSections([
+            ['key' => 'lacak', 'visible' => false],
+            ['key' => 'hero', 'visible' => true],
+            ['key' => 'layanan', 'visible' => true],
+        ]);
+
+        $this->get('/')
+            ->assertOk()
+            ->assertDontSee('Lacak Status Permohonan Anda');
+    }
+
+    public function test_lacak_section_mengikuti_urutan_yang_diatur(): void
+    {
+        // 'lacak' dipindah ke bawah, di antara layanan dan hero -- membuktikan
+        // section ini bisa dipindah sama seperti Hero dan Layanan, bukan lagi
+        // selalu terkunci di posisi paling atas.
+        $this->makeLayanan();
+        $this->setSections([
+            ['key' => 'layanan', 'visible' => true],
+            ['key' => 'lacak', 'visible' => true],
+            ['key' => 'hero', 'visible' => true],
+        ]);
+
+        $content = $this->get('/')->assertOk()->getContent();
+
+        $posLayanan = strpos($content, 'Layanan PTSP');
+        $posLacak = strpos($content, 'Lacak Status Permohonan Anda');
+        $posHero = strpos($content, 'Selamat Datang di');
+
+        $this->assertNotFalse($posLayanan);
+        $this->assertNotFalse($posLacak);
+        $this->assertNotFalse($posHero);
+        $this->assertLessThan($posLacak, $posLayanan, 'layanan harus sebelum lacak');
+        $this->assertLessThan($posHero, $posLacak, 'lacak harus sebelum hero');
     }
 }

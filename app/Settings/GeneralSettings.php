@@ -50,13 +50,15 @@ class GeneralSettings extends Settings
      * Master section beranda: key => label. Urutan di sini = urutan default
      * dan menjadi satu-satunya sumber kebenaran daftar section yang valid.
      *
-     * Hanya dua section yang relevan untuk PTSP Online. Enam section CMS-web
-     * lainnya (Statistik, Pimpinan, Pendamping/Waka, Zona Integritas, Galeri,
-     * Berita) sengaja dikeluarkan dari daftar ini -- normalizeSections()
-     * otomatis membuang key yang sudah tidak dikenal dari data lama, jadi
-     * pengaturan tersimpan sebelumnya tidak perlu dibersihkan manual.
+     * Hanya tiga section yang relevan untuk PTSP Online. Enam section
+     * CMS-web lainnya (Statistik, Pimpinan, Pendamping/Waka, Zona
+     * Integritas, Galeri, Berita) sengaja dikeluarkan dari daftar ini --
+     * normalizeSections() otomatis membuang key yang sudah tidak dikenal
+     * dari data lama, jadi pengaturan tersimpan sebelumnya tidak perlu
+     * dibersihkan manual.
      */
     public const HOME_SECTIONS = [
+        'lacak' => 'Lacak Permohonan',
         'hero' => 'Hero / Slider',
         'layanan' => 'Layanan PTSP',
     ];
