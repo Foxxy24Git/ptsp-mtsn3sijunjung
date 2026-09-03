@@ -61,6 +61,10 @@ class UserRoleAccessTest extends TestCase
     {
         $user = User::factory()->create();
 
+        // Sengaja TIDAK memanggil refresh(): default harus sudah benar di
+        // objek hasil create(), bukan cuma setelah dibaca ulang dari DB —
+        // itulah yang membuat canAccessPanel() aman dipakai di request yang
+        // sama dengan pembuatan user.
         $this->assertSame('administrator', $user->role);
     }
 
@@ -167,6 +171,19 @@ class User extends Authenticatable implements FilamentUser
     public const ROLES = [
         self::ROLE_ADMINISTRATOR => 'Administrator',
         self::ROLE_PETUGAS => 'Petugas',
+    ];
+
+    /**
+     * Default di level PHP, bukan cuma di level kolom database: tanpa ini,
+     * instance yang baru dibuat (mis. `User::factory()->create()`) punya
+     * `role` bernilai null di memori sampai di-refresh dari DB — cukup
+     * untuk membuat `canAccessPanel()` salah menolak admin yang baru saja
+     * login di siklus request yang sama.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'role' => self::ROLE_ADMINISTRATOR,
     ];
 
     /**
