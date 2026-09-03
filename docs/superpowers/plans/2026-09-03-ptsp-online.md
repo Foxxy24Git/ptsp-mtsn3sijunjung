@@ -16,7 +16,7 @@ Berlaku untuk SEMUA task di bawah:
 
 - **Direktori kerja**: `/Users/user/Herd/ptsp-online` (dibuat di Task 1). Semua path relatif terhadap direktori ini.
 - **Bahasa**: seluruh teks yang dilihat pengguna, label Filament, dan komentar kode ditulis dalam Bahasa Indonesia.
-- **Gaya test**: PHPUnit berbasis kelas (BUKAN Pest), `namespace Tests\Feature;` atau `Tests\Unit`, `use Illuminate\Foundation\Testing\RefreshDatabase;`, `extends Tests\TestCase`. Database test: SQLite `:memory:` (sudah diatur di `phpunit.xml`).
+- **Gaya test**: PHPUnit berbasis kelas (BUKAN Pest), `namespace Tests\Feature;` atau `Tests\Unit`, `use Illuminate\Foundation\Testing\RefreshDatabase;`, `extends Tests\TestCase`. Database test: SQLite `:memory:` (sudah diatur di `phpunit.xml`). Data provider: PHPUnit 12 tidak lagi membaca anotasi docblock `@dataProvider` — pakai atribut `#[\PHPUnit\Framework\Attributes\DataProvider('namaMethod')]`.
 - **Tidak ada factory** untuk `Form`/`FormField`/`FormSubmission`. Buat data test dengan `Model::create([...])` — ikuti gaya `tests/Feature/FormPublicPageTest.php`.
 - **Migrasi wajib kompatibel SQLite**: hanya menambah kolom/tabel. JANGAN mengubah tipe kolom atau memakai `enum` MySQL.
 - **Warna**: seluruh aksen memakai `var(--color-primary)` (kelas Tailwind `bg-primary`, `text-primary`, `border-primary`). JANGAN pernah menulis nilai hijau langsung di Blade.
@@ -831,6 +831,7 @@ File: `tests/Unit/WhatsappNumberTest.php`
 namespace Tests\Unit;
 
 use App\Support\WhatsappNumber;
+use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 
 class WhatsappNumberTest extends TestCase
@@ -846,7 +847,7 @@ class WhatsappNumberTest extends TestCase
         ];
     }
 
-    /** @dataProvider nomorProvider */
+    #[DataProvider('nomorProvider')]
     public function test_semua_bentuk_penulisan_menghasilkan_nomor_yang_sama(string $masukan): void
     {
         $this->assertSame('6281234567890', WhatsappNumber::normalize($masukan));
@@ -4043,6 +4044,7 @@ use App\Filament\Resources\Stats\StatResource;
 use App\Models\Menu;
 use Database\Seeders\PtspServiceSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Tests\TestCase;
 
 class PtspNavigationTest extends TestCase
@@ -4061,7 +4063,7 @@ class PtspNavigationTest extends TestCase
         ];
     }
 
-    /** @dataProvider resourceTersembunyiProvider */
+    #[DataProvider('resourceTersembunyiProvider')]
     public function test_modul_cms_yang_tidak_dipakai_tidak_muncul_di_navigasi(string $resource): void
     {
         $this->assertFalse($resource::shouldRegisterNavigation());
