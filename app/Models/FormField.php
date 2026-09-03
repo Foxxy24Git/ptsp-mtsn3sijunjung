@@ -6,6 +6,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class FormField extends Model
 {
+    /** Tipe field yang didukung: kunci = nilai kolom `type`, nilai = label operator. */
+    public const TYPES = [
+        'text' => 'Teks singkat',
+        'textarea' => 'Teks panjang',
+        'date' => 'Tanggal',
+        'number' => 'Angka',
+        'select' => 'Pilihan (dropdown)',
+        'checkbox' => 'Checkbox (pilih banyak)',
+        'file' => 'Upload berkas',
+    ];
+
     protected $fillable = [
         'form_id',
         'label',
@@ -14,6 +25,7 @@ class FormField extends Model
         'required',
         'is_unique',
         'sort_order',
+        'help_text',
     ];
 
     protected function casts(): array
