@@ -1,0 +1,241 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../views';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+        'Segoe UI Symbol', 'Noto Color Emoji';
+
+    /* Warna tema default. Di-override saat runtime dari GeneralSettings.primary_color
+       lewat <style> di layout, sehingga utility bg-primary/text-primary ikut berubah. */
+    --color-primary: #2563eb;
+}
+
+/* Styling untuk konten RichEditor (HTML dari admin) yang di-render mentah. */
+@layer components {
+    .prose {
+        color: #374151;
+        line-height: 1.75;
+    }
+    .prose > :first-child { margin-top: 0; }
+    .prose > :last-child { margin-bottom: 0; }
+    .prose h1 { font-size: 1.875rem; font-weight: 700; margin: 1.75rem 0 0.75rem; color: #111827; }
+    .prose h2 { font-size: 1.5rem; font-weight: 700; margin: 1.5rem 0 0.75rem; color: #111827; }
+    .prose h3 { font-size: 1.25rem; font-weight: 600; margin: 1.25rem 0 0.5rem; color: #111827; }
+    .prose p { margin: 0.85rem 0; }
+    .prose a { color: var(--color-primary); text-decoration: underline; }
+    .prose ul { list-style: disc; padding-left: 1.5rem; margin: 0.85rem 0; }
+    .prose ol { list-style: decimal; padding-left: 1.5rem; margin: 0.85rem 0; }
+    .prose li { margin: 0.35rem 0; }
+    .prose blockquote { border-left: 4px solid var(--color-primary); padding-left: 1rem; margin: 1rem 0; color: #4b5563; font-style: italic; }
+    .prose img { max-width: 100%; height: auto; border-radius: 0.5rem; margin: 1rem 0; }
+    .prose strong { font-weight: 700; }
+    .prose hr { margin: 1.5rem 0; border-color: #e5e7eb; }
+}
+
+/* ==========================================================================
+   Carousel / slider (auto-slide + Ken Burns)
+   Markup di resources/views/partials/slider.blade.php, kontrol di app.js.
+   ========================================================================== */
+@layer components {
+    /* Crossfade antar slide */
+    .slider__slide {
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 900ms ease-in-out;
+    }
+    .slider__slide.is-active {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Ken Burns: slide aktif zoom pelan dari 1 → 1.08 selama tampil.
+       Animasi restart tiap kali .is-active dipasang ulang oleh JS. */
+    .slider__img {
+        transform: scale(1);
+        transform-origin: center;
+        will-change: transform;
+    }
+    .slider__slide.is-active .slider__img {
+        animation: slider-kenburns 8s ease-out both;
+    }
+
+    @keyframes slider-kenburns {
+        from { transform: scale(1); }
+        to   { transform: scale(1.08); }
+    }
+
+    /* Indikator titik aktif */
+    .slider__dot.is-active {
+        width: 1.5rem;
+        background-color: #ffffff;
+    }
+}
+
+/* Hormati preferensi pengurangan gerak: matikan zoom & transisi. */
+@media (prefers-reduced-motion: reduce) {
+    .slider__slide { transition: none; }
+    .slider__slide.is-active .slider__img { animation: none; }
+}
+
+/* ==========================================================================
+   Section statistik (count-up + hover-fill mengalir dari ikon)
+   Markup di resources/views/partials/stats.blade.php, count-up di app.js.
+   Per item: --stat-color (warna isian), --stat-fg (warna teks kontras).
+   ========================================================================== */
+@layer components {
+    .stat__circle {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 8rem;
+        height: 8rem;
+        overflow: hidden;
+        border-radius: 9999px;
+        background: #ffffff;
+        box-shadow: 0 14px 32px -12px rgba(15, 23, 42, 0.28);
+        outline: 1px solid rgba(15, 23, 42, 0.05);
+    }
+
+    /* Isian warna mengalir keluar dari posisi ikon (kiri-atas) mengisi lingkaran */
+    .stat__fill {
+        position: absolute;
+        inset: 0;
+        background: var(--stat-color, var(--color-primary));
+        clip-path: circle(0% at 24% 24%);
+        transition: clip-path 700ms cubic-bezier(0.33, 1, 0.68, 1);
+        will-change: clip-path;
+    }
+    .stat:hover .stat__fill,
+    .stat:focus-within .stat__fill {
+        clip-path: circle(140% at 24% 24%);
+    }
+
+    .stat__num {
+        position: relative;
+        z-index: 10;
+        padding: 0 0.5rem;
+        font-size: 1.75rem;
+        font-weight: 700;
+        line-height: 1.1;
+        color: #111827;
+        transition: color 450ms ease;
+    }
+    .stat:hover .stat__num,
+    .stat:focus-within .stat__num {
+        color: var(--stat-fg, #ffffff);
+    }
+
+    /* Badge ikon: kecil, mengambang di kiri-atas, transisi halus */
+    .stat__badge {
+        position: absolute;
+        left: 0.6rem;
+        top: 0.6rem;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 9999px;
+        background: var(--stat-color, var(--color-primary));
+        color: var(--stat-fg, #ffffff);
+        box-shadow: 0 0 0 3px #ffffff, 0 6px 14px -4px rgba(15, 23, 42, 0.35);
+        transition: transform 450ms cubic-bezier(0.33, 1, 0.68, 1);
+    }
+    .stat:hover .stat__badge,
+    .stat:focus-within .stat__badge {
+        transform: scale(1.08);
+    }
+
+    @media (min-width: 640px) {
+        .stat__circle { width: 9rem; height: 9rem; }
+        .stat__num { font-size: 2rem; }
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stat__fill { transition: none; }
+    .stat__badge { transition: none; }
+}
+
+/* ==========================================================================
+   Halaman Zona Integritas (.zi-content) — daftar poin dari RichEditor admin
+   ditampilkan sebagai checklist bertanda centang, bukan bullet polos.
+   Markup di resources/views/pages/zona-integritas.blade.php.
+   ========================================================================== */
+@layer components {
+    .zi-content ul {
+        list-style: none;
+        margin: 1.25rem 0;
+        padding-left: 0;
+        display: grid;
+        gap: 0.85rem;
+    }
+    .zi-content ul li {
+        position: relative;
+        padding-left: 2.5rem;
+        margin: 0;
+    }
+    .zi-content ul li::before {
+        content: '\2713';
+        position: absolute;
+        left: 0;
+        top: 0.05rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 1.75rem;
+        height: 1.75rem;
+        border-radius: 9999px;
+        background: var(--color-primary);
+        color: #ffffff;
+        font-size: 0.85rem;
+        font-weight: 700;
+        line-height: 1.75rem;
+        text-align: center;
+    }
+}
+
+/* ==========================================================================
+   Reveal-on-scroll ([data-reveal]) — hanya aktif bila JS ada (class .js).
+   ========================================================================== */
+.js [data-reveal] {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 700ms ease, transform 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.js [data-reveal].is-visible {
+    opacity: 1;
+    transform: none;
+}
+
+/* [data-reveal-group]: child langsungnya muncul bergantian (cascade) alih-alih
+   sekaligus, mis. kartu berita. Delay bertahap per urutan anak (nth-child). */
+.js [data-reveal-group] > * {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 600ms ease, transform 600ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+.js [data-reveal-group].is-visible > * {
+    opacity: 1;
+    transform: none;
+}
+.js [data-reveal-group].is-visible > *:nth-child(1) { transition-delay: 0ms; }
+.js [data-reveal-group].is-visible > *:nth-child(2) { transition-delay: 90ms; }
+.js [data-reveal-group].is-visible > *:nth-child(3) { transition-delay: 180ms; }
+.js [data-reveal-group].is-visible > *:nth-child(4) { transition-delay: 270ms; }
+.js [data-reveal-group].is-visible > *:nth-child(5) { transition-delay: 360ms; }
+.js [data-reveal-group].is-visible > *:nth-child(6) { transition-delay: 450ms; }
+
+@media (prefers-reduced-motion: reduce) {
+    .js [data-reveal],
+    .js [data-reveal-group] > * {
+        opacity: 1;
+        transform: none;
+        transition: none;
+    }
+}
