@@ -23,7 +23,7 @@ Route::post('/form/{form:slug}', [FormController::class, 'submit'])->name('forms
 
 // Layanan PTSP. Wajib didefinisikan sebelum catch-all halaman statis.
 Route::get('/layanan', [ServiceController::class, 'index'])->name('layanan.index');
-Route::get('/layanan/{form:slug}', fn () => abort(404))->name('layanan.show');
+Route::get('/layanan/{form:slug}', [ServiceController::class, 'show'])->name('layanan.show');
 Route::get('/layanan/{form:slug}/ajukan', fn () => abort(404))->name('layanan.ajukan');
 
 // Halaman statis by slug (catch-all satu segmen) — WAJIB paling akhir.

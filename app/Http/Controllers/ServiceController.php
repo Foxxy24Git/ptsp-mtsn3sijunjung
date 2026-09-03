@@ -39,4 +39,15 @@ class ServiceController extends Controller
 
         return view('layanan.index', compact('layanan', 'nomor', 'satuanKerja', 'unit', 'q'));
     }
+
+    /** Halaman rincian syarat & dasar hukum satu layanan. */
+    public function show(Form $form)
+    {
+        // Form biasa (is_service = false) tetap dilayani rute /form/{slug} lama.
+        abort_unless($form->isPublishedService(), 404);
+
+        $form->load('workUnit');
+
+        return view('layanan.show', ['layanan' => $form]);
+    }
 }
