@@ -26,7 +26,12 @@ Route::post('/form/{form:slug}', [FormController::class, 'submit'])->name('forms
 Route::get('/layanan', [ServiceController::class, 'index'])->name('layanan.index');
 Route::get('/layanan/{form:slug}', [ServiceController::class, 'show'])->name('layanan.show');
 Route::get('/layanan/{form:slug}/ajukan', [ApplicationController::class, 'create'])->name('layanan.ajukan');
-Route::post('/layanan/{form:slug}/ajukan', fn () => abort(404))->name('layanan.kirim');
+Route::post('/layanan/{form:slug}/ajukan', [ApplicationController::class, 'store'])
+    ->middleware('throttle:5,60')
+    ->name('layanan.kirim');
+
+// Stub sementara; diganti halaman bukti pengajuan sungguhan di Task 9.
+Route::get('/permohonan/selesai', fn () => response('Selesai', 200))->name('permohonan.selesai');
 
 // Halaman statis by slug (catch-all satu segmen) — WAJIB paling akhir.
 // Regex mengecualikan segmen "admin", "up", "form", "layanan", "lacak", &
