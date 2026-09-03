@@ -10,12 +10,12 @@ class HomeSectionsNormalizeTest extends TestCase
     public function test_keeps_order_and_visibility_from_stored(): void
     {
         $result = GeneralSettings::normalizeSections([
-            ['key' => 'posts', 'visible' => false],
+            ['key' => 'layanan', 'visible' => false],
             ['key' => 'hero', 'visible' => true],
         ]);
 
         // Dua entri tersimpan tampil lebih dulu, urutan dipertahankan.
-        $this->assertSame('posts', $result[0]['key']);
+        $this->assertSame('layanan', $result[0]['key']);
         $this->assertFalse($result[0]['visible']);
         $this->assertSame('hero', $result[1]['key']);
         $this->assertTrue($result[1]['visible']);
@@ -24,7 +24,7 @@ class HomeSectionsNormalizeTest extends TestCase
     public function test_appends_missing_master_keys_as_visible(): void
     {
         $result = GeneralSettings::normalizeSections([
-            ['key' => 'posts', 'visible' => true],
+            ['key' => 'layanan', 'visible' => true],
         ]);
 
         $keys = array_column($result, 'key');
@@ -35,10 +35,10 @@ class HomeSectionsNormalizeTest extends TestCase
             array_keys(GeneralSettings::HOME_SECTIONS),
             $keys
         );
-        // 'posts' tetap di depan; sisanya di-append visible=true.
-        $this->assertSame('posts', $result[0]['key']);
+        // 'layanan' tetap di depan; sisanya di-append visible=true.
+        $this->assertSame('layanan', $result[0]['key']);
         foreach ($result as $section) {
-            if ($section['key'] !== 'posts') {
+            if ($section['key'] !== 'layanan') {
                 $this->assertTrue($section['visible']);
             }
         }

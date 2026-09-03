@@ -26,9 +26,10 @@ class ManageHomeLayoutTest extends TestCase
 
     public function test_form_prefills_all_master_sections(): void
     {
-        // Simpan data tak lengkap; form harus menampilkan seluruh section master ternormalisasi.
+        // Simpan data tak lengkap (cuma 'layanan'); form harus menampilkan
+        // seluruh section master ternormalisasi ('hero' ikut ditambahkan).
         $settings = app(GeneralSettings::class);
-        $settings->home_sections = [['key' => 'posts', 'visible' => true]];
+        $settings->home_sections = [['key' => 'layanan', 'visible' => true]];
         $settings->save();
 
         $component = Livewire::test(ManageGeneralSettings::class)->assertOk();
@@ -41,9 +42,9 @@ class ManageHomeLayoutTest extends TestCase
         $this->assertCount(count(GeneralSettings::HOME_SECTIONS), $state['home_sections']);
         // Repeater menyimpan tiap item dengan key UUID acak, jadi bandingkan
         // array_values() saja. normalizeSections mempertahankan urutan
-        // tersimpan ('posts' duluan), lalu menambahkan key master di belakang.
+        // tersimpan ('layanan' duluan), lalu menambahkan key master di belakang.
         $this->assertSame(
-            GeneralSettings::normalizeSections([['key' => 'posts', 'visible' => true]]),
+            GeneralSettings::normalizeSections([['key' => 'layanan', 'visible' => true]]),
             array_values($state['home_sections'])
         );
     }
@@ -53,18 +54,15 @@ class ManageHomeLayoutTest extends TestCase
         Livewire::test(ManageGeneralSettings::class)
             ->fillForm([
                 'home_sections' => [
-                    ['key' => 'posts', 'visible' => true],
+                    ['key' => 'layanan', 'visible' => true],
                     ['key' => 'hero', 'visible' => false],
-                    ['key' => 'stats', 'visible' => true],
-                    ['key' => 'leader', 'visible' => true],
-                    ['key' => 'pendamping', 'visible' => true],
                 ],
             ])
             ->call('save')
             ->assertHasNoFormErrors();
 
         $saved = app(GeneralSettings::class)->home_sections;
-        $this->assertSame('posts', $saved[0]['key']);
+        $this->assertSame('layanan', $saved[0]['key']);
         $this->assertFalse($saved[1]['visible']); // hero disembunyikan
         $this->assertSame('hero', $saved[1]['key']);
     }
