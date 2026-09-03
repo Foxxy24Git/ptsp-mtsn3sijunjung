@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use App\Models\Form;
+use App\Models\FormSubmission;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class FormCsvExporter
@@ -73,5 +74,49 @@ class FormCsvExporter
         return response()->streamDownload(function () use ($csv) {
             echo $csv;
         }, $filename, ['Content-Type' => 'text/csv; charset=UTF-8']);
+    }
+
+    /**
+     * Bangun isi CSV seluruh permohonan lintas layanan, untuk panel Permohonan.
+     */
+    public static function toCsvStringAll(): string
+    {
+        $out = fopen('php://temp', 'r+');
+
+        $header = array_map(
+            self::escapeCell(...),
+            ['Kode Resi', 'Layanan', 'Nama Pemohon', 'WhatsApp', 'Email', 'Status', 'Catatan', 'Tanggal Pengajuan'],
+        );
+        fputcsv($out, $header, self::DELIMITER, '"', '');
+
+        foreach (FormSubmission::with('form')->latest('created_at')->cursor() as $submission) {
+            $row = [
+                self::escapeCell((string) $submission->receipt_code),
+                self::escapeCell((string) $submission->form?->title),
+                self::escapeCell((string) $submission->applicant_name),
+                self::escapeCell((string) $submission->applicant_whatsapp),
+                self::escapeCell((string) $submission->applicant_email),
+                self::escapeCell(FormSubmission::STATUSES[$submission->status] ?? $submission->status),
+                self::escapeCell((string) $submission->admin_note),
+                self::escapeCell((string) $submission->created_at),
+            ];
+            fputcsv($out, $row, self::DELIMITER, '"', '');
+        }
+
+        rewind($out);
+        $csv = stream_get_contents($out);
+        fclose($out);
+
+        return self::BOM.$csv;
+    }
+
+    /** Stream CSV seluruh permohonan sebagai unduhan file. */
+    public static function downloadAll(): StreamedResponse
+    {
+        $csv = self::toCsvStringAll();
+
+        return response()->streamDownload(function () use ($csv) {
+            echo $csv;
+        }, 'permohonan-ptsp.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 }
