@@ -16,7 +16,7 @@ Acuan desain ada di [`docs/superpowers/specs/2026-09-03-ptsp-online-design.md`](
 | Database | MySQL |
 | Media | `spatie/laravel-medialibrary` |
 | Settings | `spatie/laravel-settings` |
-| Role/akses | 1 role: **Administrator** (tanpa sistem permission) |
+| Role/akses | **Administrator** (`/admin`, akses penuh) dan **Petugas** (`/petugas`, proses permohonan) |
 
 ## Setup Lokal
 
@@ -44,3 +44,19 @@ php artisan serve              # atau akses via Herd: http://ptsp-online.test
 > ⚠️ **Kredensial default ini WAJIB diganti setelah deploy ke client.** Ganti lewat admin panel (profil) atau jalankan ulang `AdminUserSeeder` setelah mengubah nilainya.
 
 Seeder admin ada di `database/seeders/AdminUserSeeder.php` (idempotent — aman dijalankan ulang).
+
+## Panel Petugas
+
+- URL: `/petugas` (mis. `http://ptsp-online.test/petugas`)
+- Tautan "Masuk Petugas" tersedia di pojok kanan atas semua halaman publik.
+
+### Kredensial Petugas Demo
+
+| Field | Nilai |
+|---|---|
+| Email | `petugas@sekolah.test` |
+| Password | `password` |
+
+> ⚠️ Akun ini untuk pengujian lokal. Akun petugas sungguhan dibuat
+> Administrator lewat menu **Petugas** di panel admin (`/admin`), bukan
+> lewat akun demo ini.
