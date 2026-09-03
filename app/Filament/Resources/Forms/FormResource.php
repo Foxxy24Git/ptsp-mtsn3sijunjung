@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class FormResource extends Resource
 {
@@ -21,11 +22,34 @@ class FormResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
-    protected static ?string $navigationLabel = 'Form';
+    protected static string|\UnitEnum|null $navigationGroup = 'PTSP';
 
-    protected static ?string $modelLabel = 'Form';
+    protected static ?int $navigationSort = 10;
 
-    protected static ?string $pluralModelLabel = 'Form';
+    protected static ?string $navigationLabel = 'Layanan';
+
+    protected static ?string $modelLabel = 'Layanan';
+
+    protected static ?string $pluralModelLabel = 'Layanan';
+
+    /**
+     * Form::getRouteKeyName() mengembalikan 'slug' untuk keperluan rute publik
+     * (/layanan/{form:slug}). Tanpa baris ini, Filament ikut memakai 'slug'
+     * untuk resolusi record di panel admin — padahal URL admin (tombol Edit,
+     * dsb) selalu dibangun dari id numerik, sehingga setiap link Edit akan
+     * 404 karena mencari baris dengan slug = "5" alih-alih id = 5.
+     */
+    protected static ?string $recordRouteKeyName = 'id';
+
+    /**
+     * Panel ini hanya mengurus layanan PTSP. Form biasa (is_service = false)
+     * sengaja disembunyikan supaya operator tidak bingung melihat dua jenis
+     * data dalam satu daftar.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('is_service', true);
+    }
 
     public static function form(Schema $schema): Schema
     {
