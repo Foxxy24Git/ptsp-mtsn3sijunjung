@@ -30,6 +30,15 @@ class GeneralSettings extends Settings
 
     public array $home_sections;
 
+    /** Gambar background section hero (path di disk public). Null = pakai gradasi. */
+    public ?string $hero_bg_image;
+
+    /** Warna gradasi awal hero. Null/kosong = ikut primary_color. */
+    public ?string $hero_bg_from;
+
+    /** Warna gradasi akhir hero. Null/kosong = versi gelap dari warna awal. */
+    public ?string $hero_bg_to;
+
     public ?string $zi_logo;
 
     public ?string $zi_eyebrow;

@@ -74,6 +74,26 @@ class ManageGeneralSettings extends SettingsPage
                             ->grid(['default' => 1, 'md' => 2, 'xl' => 3]),
                     ])
                     ->columnSpanFull(),
+                Section::make('Section Hero (Beranda)')
+                    ->description('Background hero di beranda. Hero ini tampil kalau belum ada Slide aktif -- kalau ada Slide aktif, yang tampil adalah slider bergambar.')
+                    ->schema([
+                        FileUpload::make('hero_bg_image')
+                            ->label('Gambar Background Hero')
+                            ->image()
+                            ->directory('hero')
+                            ->disk('public')
+                            ->imageEditor()
+                            ->helperText('Opsional. Kalau diisi, gambar ini dipakai sebagai latar (otomatis diberi lapisan gelap agar tulisan tetap terbaca). Kosongkan untuk pakai gradasi warna di bawah.')
+                            ->columnSpanFull(),
+                        ColorPicker::make('hero_bg_from')
+                            ->label('Warna Gradasi Awal')
+                            ->helperText('Dipakai kalau Gambar Background kosong. Kosongkan untuk mengikuti Warna Tema.'),
+                        ColorPicker::make('hero_bg_to')
+                            ->label('Warna Gradasi Akhir')
+                            ->helperText('Kosongkan untuk otomatis memakai versi lebih gelap dari warna awal.'),
+                    ])
+                    ->columns(2)
+                    ->columnSpanFull(),
                 Section::make('Kontak')
                     ->description('Alamat dan kontak sekolah.')
                     ->schema([
