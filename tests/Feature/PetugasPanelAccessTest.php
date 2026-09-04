@@ -26,19 +26,62 @@ class PetugasPanelAccessTest extends TestCase
         $this->actingAs($petugas)->get('/petugas')->assertOk();
     }
 
-    public function test_petugas_tidak_bisa_membuka_panel_admin(): void
+    /**
+     * Batas aksesnya tetap: petugas tidak pernah bisa merender halaman admin.
+     * Yang berubah cuma cara menolaknya — dulu 403 buntu, sekarang dilempar ke
+     * form login panel itu supaya pengguna bisa langsung ganti akun.
+     */
+    public function test_petugas_diarahkan_ke_form_login_admin_saat_membuka_panel_admin(): void
     {
         $petugas = User::factory()->create(['role' => User::ROLE_PETUGAS]);
 
-        $this->actingAs($petugas)->get('/admin')->assertForbidden();
+        $this->actingAs($petugas)->get('/admin')->assertRedirect(url('/admin/login'));
     }
 
-    public function test_admin_tidak_bisa_membuka_panel_petugas(): void
+    public function test_admin_diarahkan_ke_form_login_petugas_saat_membuka_panel_petugas(): void
     {
         $admin = User::factory()->create(['role' => User::ROLE_ADMINISTRATOR]);
 
         $this->actingAs($admin)->get('/admin')->assertOk();
-        $this->actingAs($admin)->get('/petugas')->assertForbidden();
+        $this->actingAs($admin)->get('/petugas')->assertRedirect(url('/petugas/login'));
+    }
+
+    public function test_login_tidak_terlempar_ke_panel_lain_karena_intended_url_basi(): void
+    {
+        // Tamu yang sempat membuka /petugas bikin Filament menyimpan
+        // url.intended = /petugas. Kalau setelah itu dia login sebagai admin,
+        // redirect()->intended() bawaan Filament menurutinya dan melempar
+        // admin ke panel petugas — yang jelas ditolak untuknya. Tujuan akhir
+        // login harus selalu panel tempat dia baru saja login.
+        $admin = User::factory()->create([
+            'role' => User::ROLE_ADMINISTRATOR,
+            'password' => 'password',
+        ]);
+
+        $this->get('/petugas')->assertRedirect(url('/petugas/login'));
+
+        Filament::setCurrentPanel(Filament::getPanel('admin'));
+
+        Livewire::test(Login::class)
+            ->set('data.email', $admin->email)
+            ->set('data.password', 'password')
+            ->call('authenticate')
+            ->assertRedirect(url('/admin'));
+    }
+
+    public function test_membuka_form_login_panel_lain_mengakhiri_sesi_yang_lama(): void
+    {
+        // Satu guard `web` hanya boleh memegang satu identitas. Kalau sesi
+        // lama dibiarkan hidup saat form login panel lain dibuka,
+        // `password_hash_web` di sesi tetap milik user lama dan middleware
+        // AuthenticateSession akan melogout semuanya di request berikutnya —
+        // login jadi gagal diam-diam. Jadi sesi lama sengaja diakhiri di
+        // sini supaya login berikutnya berangkat dari sesi yang bersih.
+        $petugas = User::factory()->create(['role' => User::ROLE_PETUGAS]);
+
+        $this->actingAs($petugas)->get('/admin/login')->assertOk();
+
+        $this->assertGuest();
     }
 
     public function test_admin_yang_sudah_login_tetap_bisa_membuka_form_login_petugas(): void

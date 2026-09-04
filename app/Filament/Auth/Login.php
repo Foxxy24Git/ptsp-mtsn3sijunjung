@@ -11,11 +11,18 @@ class Login extends BaseLogin
 {
     /**
      * Admin dan petugas berbagi guard `web`. Kalau user yang sedang login
-     * di guard itu bukan pemilik sah panel ini (mis. admin membuka
-     * /petugas/login), mount() bawaan Filament tetap redirect ke dashboard
-     * panel ini — yang lalu ditolak 403 oleh middleware Authenticate karena
-     * canAccessPanel() gagal. Sesi salah-panel itu di-logout dulu di sini
-     * supaya form login tetap tampil, bukan malah 403.
+     * di guard itu bukan pemilik sah panel ini (mis. petugas membuka
+     * /admin/login), mount() bawaan Filament menganggapnya "sudah login"
+     * lalu redirect ke dashboard panel ini — padahal di sana dia ditolak,
+     * dan dilempar balik ke form login ini lagi (loop).
+     *
+     * Sesi salah-panel itu diakhiri di sini, bukan sekadar diabaikan.
+     * Sempat dicoba membiarkannya hidup supaya salah klik tidak bikin
+     * kehilangan sesi, tapi itu justru merusak login berikutnya:
+     * `password_hash_web` di sesi masih milik user lama, sehingga
+     * middleware AuthenticateSession menganggapnya sesi bajakan di request
+     * setelahnya lalu melogout semuanya — login tampak gagal tanpa pesan.
+     * Satu guard hanya boleh memegang satu identitas.
      */
     public function mount(): void
     {

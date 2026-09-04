@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
+use App\Http\Responses\LoginResponse;
 use App\Models\Menu;
 use App\Settings\GeneralSettings;
+use Filament\Auth\Http\Responses\Contracts\LoginResponse as LoginResponseContract;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
@@ -15,7 +17,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Cegah login melempar pengguna ke panel yang bukan miliknya karena
+        // url.intended basi dari kunjungan sebelumnya. Lihat LoginResponse.
+        $this->app->bind(LoginResponseContract::class, LoginResponse::class);
     }
 
     /**
