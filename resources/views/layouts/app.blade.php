@@ -83,8 +83,13 @@
 
             {{-- Tautan staf: masuk atau ke dashboard petugas (tetap <a> terpisah
                  dari <nav>, bukan bagian dari $navMenus). --}}
+            {{-- Arahkan ke /petugas/login (bukan /petugas): kalau yang sedang
+                 login adalah admin, mount() Login akan logout sesi salah-panel
+                 itu dan menampilkan form login petugas. Kalau langsung ke
+                 /petugas (dashboard), admin malah kena 403 dari middleware
+                 sebelum sempat melihat form login. --}}
             @php $petugasUser = auth()->user(); @endphp
-            <a href="{{ url('/petugas') }}"
+            <a href="{{ url('/petugas/login') }}"
                class="flex items-center gap-1.5 rounded-md px-2.5 py-2 text-sm font-medium text-[var(--header-fg)] hover:bg-[var(--header-hover)]"
                aria-label="{{ $petugasUser && $petugasUser->role === \App\Models\User::ROLE_PETUGAS ? 'Dashboard Petugas' : 'Masuk Petugas' }}">
                 <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8" aria-hidden="true">

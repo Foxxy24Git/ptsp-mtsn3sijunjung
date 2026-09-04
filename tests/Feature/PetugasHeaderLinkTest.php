@@ -36,4 +36,15 @@ class PetugasHeaderLinkTest extends TestCase
             ->assertOk()
             ->assertSee('Masuk Petugas');
     }
+
+    public function test_tautan_masuk_petugas_mengarah_ke_halaman_login_bukan_dashboard(): void
+    {
+        // Kalau tautan ini mengarah ke /petugas (dashboard) alih-alih
+        // /petugas/login, admin yang mengklik tombol ini langsung kena 403
+        // dari middleware Authenticate — Login::mount() (yang menangani
+        // sesi salah-panel) tak pernah sempat jalan sama sekali.
+        $this->get('/')
+            ->assertOk()
+            ->assertSee('href="' . url('/petugas/login') . '"', false);
+    }
 }
