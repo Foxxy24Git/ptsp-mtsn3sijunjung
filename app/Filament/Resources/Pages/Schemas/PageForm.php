@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Pages\Schemas;
 
+use App\Models\Page;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\SpatieMediaLibraryFileUpload;
@@ -44,6 +45,16 @@ class PageForm
                     ->disk('public')
                     ->image()
                     ->imageEditor()
+                    ->columnSpanFull(),
+                SpatieMediaLibraryFileUpload::make('documents')
+                    ->collection('documents')
+                    ->label('Dokumen Terkait')
+                    ->disk('public')
+                    ->multiple()
+                    ->reorderable()
+                    ->acceptedFileTypes(Page::DOCUMENT_MIME_TYPES)
+                    ->maxSize(10240)
+                    ->helperText('Dokumen yang bisa diunduh pengunjung di halaman ini, tampil sebagai kartu di bawah konten. Format PDF/DOC/DOCX, maksimal 10MB per berkas.')
                     ->columnSpanFull(),
                 Select::make('status')
                     ->options(['draft' => 'Draft', 'published' => 'Published'])

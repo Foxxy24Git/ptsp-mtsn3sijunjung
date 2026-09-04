@@ -20,5 +20,7 @@
         <div class="prose mt-8 max-w-none">
             {!! $page->content !!}
         </div>
+
+        @include('partials.page-documents', ['page' => $page])
     </article>
 @endsection

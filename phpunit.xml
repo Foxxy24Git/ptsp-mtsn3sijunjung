@@ -18,6 +18,12 @@
         </include>
     </source>
     <php>
+        <!-- Default CLI memory_limit (128M) gets exhausted partway through the
+             suite now that PageDocumentFieldTest exercises real PDF-to-image
+             rendering (Imagick+Ghostscript) for its preview conversion;
+             each render leaves the process using more memory than the CLI
+             default budgeted for a plain HTTP-response test suite. -->
+        <ini name="memory_limit" value="512M"/>
         <env name="APP_ENV" value="testing"/>
         <env name="APP_MAINTENANCE_DRIVER" value="file"/>
         <env name="BCRYPT_ROUNDS" value="4"/>

@@ -31,5 +31,7 @@
         <div class="zi-content prose mt-10 max-w-none rounded-2xl border border-gray-100 bg-white p-6 shadow-sm sm:p-10" data-reveal>
             {!! $page->content !!}
         </div>
+
+        @include('partials.page-documents', ['page' => $page])
     </article>
 @endsection
