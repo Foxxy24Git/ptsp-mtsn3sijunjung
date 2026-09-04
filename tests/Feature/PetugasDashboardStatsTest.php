@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Filament\Petugas\Resources\Permohonan\PermohonanResource;
 use App\Models\Form;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -42,5 +43,17 @@ class PetugasDashboardStatsTest extends TestCase
             ->assertSeeInOrder(['Total Permohonan', 'Diajukan', 'Diproses', 'Selesai', 'Ditolak'])
             ->assertSeeInOrder(['Total Permohonan', '5'])
             ->assertSeeInOrder(['Diproses', '2']);
+    }
+
+    public function test_kartu_statistik_bertaut_ke_permohonan_terfilter_status(): void
+    {
+        $this->actingAs(User::factory()->create(['role' => User::ROLE_PETUGAS]))
+            ->get('/petugas')
+            ->assertOk()
+            ->assertSee(PermohonanResource::getUrl())
+            ->assertSee(PermohonanResource::getUrl(parameters: ['filters' => ['status' => ['value' => 'diajukan']]]))
+            ->assertSee(PermohonanResource::getUrl(parameters: ['filters' => ['status' => ['value' => 'diproses']]]))
+            ->assertSee(PermohonanResource::getUrl(parameters: ['filters' => ['status' => ['value' => 'selesai']]]))
+            ->assertSee(PermohonanResource::getUrl(parameters: ['filters' => ['status' => ['value' => 'ditolak']]]));
     }
 }

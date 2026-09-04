@@ -2,6 +2,7 @@
 
 namespace App\Filament\Petugas\Widgets;
 
+use App\Filament\Petugas\Resources\Permohonan\PermohonanResource;
 use App\Models\FormSubmission;
 use Filament\Widgets\StatsOverviewWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -25,11 +26,16 @@ class PermohonanStatsWidget extends StatsOverviewWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Permohonan', FormSubmission::count()),
-            Stat::make('Diajukan', FormSubmission::where('status', 'diajukan')->count()),
-            Stat::make('Diproses', FormSubmission::where('status', 'diproses')->count()),
-            Stat::make('Selesai', FormSubmission::where('status', 'selesai')->count()),
-            Stat::make('Ditolak', FormSubmission::where('status', 'ditolak')->count()),
+            Stat::make('Total Permohonan', FormSubmission::count())
+                ->url(PermohonanResource::getUrl()),
+            Stat::make('Diajukan', FormSubmission::where('status', 'diajukan')->count())
+                ->url(PermohonanResource::getUrl(parameters: ['filters' => ['status' => ['value' => 'diajukan']]])),
+            Stat::make('Diproses', FormSubmission::where('status', 'diproses')->count())
+                ->url(PermohonanResource::getUrl(parameters: ['filters' => ['status' => ['value' => 'diproses']]])),
+            Stat::make('Selesai', FormSubmission::where('status', 'selesai')->count())
+                ->url(PermohonanResource::getUrl(parameters: ['filters' => ['status' => ['value' => 'selesai']]])),
+            Stat::make('Ditolak', FormSubmission::where('status', 'ditolak')->count())
+                ->url(PermohonanResource::getUrl(parameters: ['filters' => ['status' => ['value' => 'ditolak']]])),
         ];
     }
 }
