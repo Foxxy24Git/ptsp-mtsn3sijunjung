@@ -53,6 +53,11 @@
                 <span class="text-lg font-bold text-[var(--header-fg)]">{{ $settings->site_name }}</span>
             </a>
 
+            {{-- Grup kanan: nav menu + tautan staf + toggle mobile disatukan dalam
+                 satu flex agar menu baru yang ditambahkan selalu nempel di kanan,
+                 dekat "Masuk Petugas" — bukan tersebar ke tengah lewat justify-between
+                 3 kolom seperti sebelumnya. --}}
+            <div class="flex items-center gap-4">
             {{-- Navigasi desktop (dari tabel menus, termasuk submenu) --}}
             <nav class="hidden items-center gap-1 md:flex">
                 @foreach ($navMenus as $menu)
@@ -76,9 +81,8 @@
                 @endforeach
             </nav>
 
-            {{-- Tautan staf: masuk atau ke dashboard petugas. Selalu tampil
-                 (desktop & mobile) — bukan bagian dari menu konten seperti
-                 $navMenus, karena itu ditempatkan terpisah dari <nav>. --}}
+            {{-- Tautan staf: masuk atau ke dashboard petugas (tetap <a> terpisah
+                 dari <nav>, bukan bagian dari $navMenus). --}}
             @php $petugasUser = auth()->user(); @endphp
             <a href="{{ url('/petugas') }}"
                class="flex items-center gap-1.5 rounded-md px-2.5 py-2 text-sm font-medium text-[var(--header-fg)] hover:bg-[var(--header-hover)]"
@@ -109,6 +113,7 @@
                     @endforeach
                 </div>
             </details>
+            </div>
         </div>
     </header>
 
