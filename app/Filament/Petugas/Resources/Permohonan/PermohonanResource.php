@@ -12,9 +12,9 @@ use Filament\Tables\Table;
 
 /**
  * Tabelnya memakai ulang FormSubmissionsTable yang sama dengan panel admin
- * (kolom, filter, aksi Ubah Status & Detail identik) — satu sumber
- * kebenaran, lihat spec §2.4. Tidak ada halaman create/edit: satu-satunya
- * cara memproses permohonan adalah lewat aksi pada tabel ini.
+ * (kolom, filter, aksi Ubah Status, Detail, & Export Excel identik) — satu
+ * sumber kebenaran, lihat spec §2.4. Tidak ada halaman create/edit:
+ * satu-satunya cara memproses permohonan adalah lewat aksi pada tabel ini.
  */
 class PermohonanResource extends Resource
 {
@@ -38,12 +38,7 @@ class PermohonanResource extends Resource
 
     public static function table(Table $table): Table
     {
-        // toolbarActions([]) MENIMPA (bukan menambah) — ini sengaja
-        // menghapus aksi "Export Excel" milik admin dari FormSubmissionsTable
-        // tanpa mengubah class itu sama sekali. Ekspor seluruh data
-        // permohonan adalah kebutuhan pelaporan admin, bukan bagian dari
-        // "memproses permohonan" yang diminta untuk petugas (spec §2.4).
-        return FormSubmissionsTable::configure($table)->toolbarActions([]);
+        return FormSubmissionsTable::configure($table);
     }
 
     public static function getPages(): array

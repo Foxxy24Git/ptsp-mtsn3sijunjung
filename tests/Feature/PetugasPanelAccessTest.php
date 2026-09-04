@@ -151,16 +151,15 @@ class PetugasPanelAccessTest extends TestCase
             ->assertSee('Budi Santoso');
     }
 
-    public function test_petugas_tidak_melihat_tombol_export_excel(): void
+    public function test_petugas_melihat_tombol_export_excel(): void
     {
         // FormSubmissionsTable (dipakai ulang dari admin) punya toolbar
-        // Export Excel bawaan — resource petugas sengaja menghapusnya
-        // (spec §2.4), jadi ini pengaman supaya perubahan tak sengaja pada
-        // PermohonanResource tidak mengembalikannya diam-diam.
+        // Export Excel bawaan — petugas kini juga boleh mengunduh laporan
+        // xlsx yang sama seperti admin, bukan cuma memproses permohonan.
         $this->actingAs(User::factory()->create(['role' => User::ROLE_PETUGAS]))
             ->get('/petugas/permohonan')
             ->assertOk()
-            ->assertDontSee('Export Excel');
+            ->assertSee('Export Excel');
     }
 
     public function test_admin_tetap_melihat_tombol_export_excel(): void
