@@ -5,6 +5,7 @@ namespace App\Filament\Auth;
 use Filament\Auth\Pages\Login as BaseLogin;
 use Filament\Facades\Filament;
 use Filament\Models\Contracts\FilamentUser;
+use Illuminate\Contracts\Support\Htmlable;
 
 class Login extends BaseLogin
 {
@@ -28,5 +29,27 @@ class Login extends BaseLogin
         }
 
         parent::mount();
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return match (Filament::getCurrentOrDefaultPanel()->getId()) {
+            'admin' => 'Login Administrator',
+            'petugas' => 'Login Petugas',
+            default => parent::getTitle(),
+        };
+    }
+
+    public function getHeading(): string|Htmlable|null
+    {
+        if (filled($this->userUndertakingMultiFactorAuthentication)) {
+            return parent::getHeading();
+        }
+
+        return match (Filament::getCurrentOrDefaultPanel()->getId()) {
+            'admin' => 'Masuk sebagai Administrator',
+            'petugas' => 'Masuk sebagai Petugas',
+            default => parent::getHeading(),
+        };
     }
 }
