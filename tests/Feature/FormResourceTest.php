@@ -7,6 +7,8 @@ use App\Filament\Resources\Forms\Pages\ListForms;
 use App\Models\Form;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -44,6 +46,48 @@ class FormResourceTest extends TestCase
         $this->assertNotNull($form);
         $this->assertSame(2, $form->fields()->count());
         $this->assertSame('select', $form->fields()->where('label', 'Kelas')->first()->type);
+    }
+
+    public function test_can_create_document_field_with_uploaded_file(): void
+    {
+        Storage::fake('public');
+
+        Livewire::test(CreateForm::class)
+            ->fillForm([
+                'title' => 'Keluar Masuk Siswa',
+                'slug' => 'keluar-masuk-siswa',
+                'status' => 'published',
+                'fields' => [
+                    [
+                        'label' => 'Blanko Surat Keluar Masuk',
+                        'type' => 'document',
+                        'document_path' => [UploadedFile::fake()->create('blanko.pdf', 100, 'application/pdf')],
+                    ],
+                ],
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $field = Form::where('slug', 'keluar-masuk-siswa')->first()->fields()->first();
+
+        $this->assertSame('document', $field->type);
+        $this->assertNotNull($field->document_path);
+        Storage::disk('public')->assertExists($field->document_path);
+    }
+
+    public function test_document_field_requires_a_file_upload(): void
+    {
+        Livewire::test(CreateForm::class)
+            ->fillForm([
+                'title' => 'Tanpa Berkas',
+                'slug' => 'tanpa-berkas',
+                'status' => 'draft',
+                'fields' => [
+                    ['label' => 'Blanko', 'type' => 'document'],
+                ],
+            ])
+            ->call('create')
+            ->assertHasFormErrors(['fields.0.document_path']);
     }
 
     public function test_form_slug_must_be_unique(): void

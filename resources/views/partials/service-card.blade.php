@@ -34,10 +34,12 @@
         </div>
 
         <div class="mt-4 grid grid-cols-2 gap-3">
-            <a href="{{ route('layanan.show', $layanan) }}"
-               class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+            <button type="button"
+                    data-layanan-detail
+                    data-target="layanan-detail-{{ $layanan->id }}"
+                    class="inline-flex items-center justify-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2.5 text-sm font-medium text-gray-700 transition hover:border-primary hover:text-primary focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                 Rincian
-            </a>
+            </button>
             <a href="{{ route('layanan.ajukan', $layanan) }}"
                class="inline-flex items-center justify-center gap-1.5 rounded-lg bg-primary px-3 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
                 Ajukan
@@ -45,4 +47,56 @@
             </a>
         </div>
     </div>
+
+    {{-- Konten modal "Rincian". Di-clone ke #layanan-modal (layouts/app.blade.php)
+         saat tombol Rincian diklik -- tanpa request server tambahan, jadi modal
+         terbuka instan. Logika buka/tutup: initLayananModal() di app.js. --}}
+    <template id="layanan-detail-{{ $layanan->id }}" data-layanan-template>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
+            {{ $layanan->organizer }} / {{ $layanan->workUnit?->name ?? 'Umum' }}
+        </span>
+
+        <h2 class="mt-3 text-xl font-bold leading-snug text-gray-900 sm:text-2xl">{{ $layanan->title }}</h2>
+
+        @if ($layanan->description)
+            <p class="mt-2 text-sm text-gray-600">{{ $layanan->description }}</p>
+        @endif
+
+        <dl class="mt-4 grid grid-cols-2 gap-3 rounded-xl bg-gray-50 px-4 py-3 text-sm sm:grid-cols-3">
+            <div class="col-span-2 sm:col-span-1">
+                <dt class="text-gray-500">Satuan Kerja</dt>
+                <dd class="font-medium text-gray-900">{{ $layanan->workUnit?->name ?? 'Umum' }}</dd>
+            </div>
+            <div>
+                <dt class="text-gray-500">Waktu Layanan</dt>
+                <dd class="font-medium text-gray-900">{{ $layanan->duration_text ?: 'Menyesuaikan' }}</dd>
+            </div>
+            <div>
+                <dt class="text-gray-500">Biaya</dt>
+                <dd class="font-medium text-primary">{{ $layanan->fee_text }}</dd>
+            </div>
+        </dl>
+
+        <div class="prose mt-5 max-w-none">
+            <h3>Persyaratan &amp; Alur</h3>
+            {!! $layanan->requirements ?: '<p>Rincian persyaratan belum diisi operator.</p>' !!}
+        </div>
+
+        @if ($layanan->legal_basis)
+            <div class="prose mt-5 max-w-none">
+                <h3>Dasar Hukum</h3>
+                {!! $layanan->legal_basis !!}
+            </div>
+        @endif
+
+        <div class="mt-5">
+            @include('partials.service-documents', ['layanan' => $layanan])
+        </div>
+
+        <a href="{{ route('layanan.ajukan', $layanan) }}"
+           class="mt-6 flex w-full items-center justify-center gap-1.5 rounded-lg bg-primary px-4 py-3 text-sm font-semibold text-white shadow-sm transition hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2">
+            Mulai Ajukan Permohonan
+            <span aria-hidden="true">&rarr;</span>
+        </a>
+    </template>
 </article>

@@ -16,7 +16,7 @@ class ServiceController extends Controller
             ->services()
             ->published()
             ->ordered()
-            ->with('workUnit')
+            ->with(['workUnit', 'fields' => fn ($query) => $query->where('type', 'document')])
             ->get();
 
         // Nomor kartu dihitung dari urutan PENUH, bukan dari hasil yang sedang
@@ -46,7 +46,7 @@ class ServiceController extends Controller
         // Form biasa (is_service = false) tetap dilayani rute /form/{slug} lama.
         abort_unless($form->isPublishedService(), 404);
 
-        $form->load('workUnit');
+        $form->load(['workUnit', 'fields' => fn ($query) => $query->where('type', 'document')]);
 
         return view('layanan.show', ['layanan' => $form]);
     }

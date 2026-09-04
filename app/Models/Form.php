@@ -15,6 +15,7 @@ class Form extends Model
         'success_message',
         'status',
         'is_service',
+        'requires_applicant_identity',
         'organizer',
         'work_unit_id',
         'duration_text',
@@ -28,6 +29,7 @@ class Form extends Model
     {
         return [
             'is_service' => 'boolean',
+            'requires_applicant_identity' => 'boolean',
             'sort_order' => 'integer',
         ];
     }

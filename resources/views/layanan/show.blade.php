@@ -52,6 +52,12 @@
                         <div class="prose mt-3 max-w-none">{!! $layanan->legal_basis !!}</div>
                     </section>
                 @endif
+
+                @if ($layanan->fields->where('type', 'document')->whereNotNull('document_path')->isNotEmpty())
+                    <section class="mt-5 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                        @include('partials.service-documents', ['layanan' => $layanan])
+                    </section>
+                @endif
             </div>
         </div>
     </div>

@@ -2,6 +2,36 @@
      bagian dari $settings->orderedSections() karena ini pintu masuk
      fungsional (pelacakan permohonan), bukan konten yang admin atur
      tampil/sembunyi/urutannya. --}}
+@php
+    // Tutorial statis 4 langkah di bawah kotak pencarian, untuk pemohon baru
+    // yang belum pernah mengajukan (belum punya kode resi untuk dilacak).
+    $lacakLangkah = [
+        [
+            'label' => 'Pilih Layanan',
+            'desc' => 'Cari jenis layanan pada katalog publik, lalu klik tombol Rincian atau Ajukan.',
+            'tag' => 'Cepat & Mudah',
+            'icon' => 'clipboard-document-list',
+        ],
+        [
+            'label' => 'Isi Formulir & Berkas',
+            'desc' => 'Lengkapi data diri, nomor WhatsApp & Email aktif, serta unggah dokumen persyaratan.',
+            'tag' => 'Unggah Dokumen',
+            'icon' => 'arrow-up-tray',
+        ],
+        [
+            'label' => 'Simpan Kode Resi',
+            'desc' => 'Sistem menghasilkan Kode Resi. Simpan kode tersebut untuk memantau status berkas.',
+            'tag' => 'Wajib Disimpan',
+            'icon' => 'identification',
+        ],
+        [
+            'label' => 'Lacak & Selesai',
+            'desc' => 'Pantau progres verifikasi secara real-time hingga dokumen selesai & siap diunduh.',
+            'tag' => 'Transparan & Akurat',
+            'icon' => 'signal',
+        ],
+    ];
+@endphp
 <section class="border-b border-gray-200 bg-primary/5">
     <div class="mx-auto max-w-3xl px-4 py-8 text-center" data-reveal>
         <p class="text-sm font-medium text-gray-600">Sudah mengajukan permohonan?</p>
@@ -23,5 +53,38 @@
                 <span aria-hidden="true">&rarr;</span>
             </button>
         </form>
+    </div>
+
+    <div class="mx-auto max-w-6xl px-4 pb-10" data-reveal-group>
+        <div class="border-t border-gray-900/10 pt-8 text-center">
+            <p class="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-gray-500">
+                <x-heroicon-o-light-bulb class="h-4 w-4 text-primary" aria-hidden="true" />
+                Belum pernah mengajukan?
+            </p>
+            <h3 class="mt-1 text-base font-bold text-gray-900">4 Langkah Mengurus Permohonan</h3>
+        </div>
+
+        <div class="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            @foreach ($lacakLangkah as $langkah)
+                <div class="rounded-xl border border-gray-200 bg-white p-4 text-left shadow-sm">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="inline-flex items-center gap-1.5 text-xs font-bold text-primary">
+                            <x-dynamic-component :component="'heroicon-o-'.$langkah['icon']" class="h-4 w-4" aria-hidden="true" />
+                            {{ sprintf('%02d', $loop->iteration) }}
+                        </span>
+                        @if ($loop->last)
+                            <x-heroicon-o-check-circle class="h-4 w-4 shrink-0 text-emerald-500" aria-hidden="true" />
+                        @else
+                            <x-heroicon-o-arrow-right class="h-4 w-4 shrink-0 text-gray-300" aria-hidden="true" />
+                        @endif
+                    </div>
+
+                    <h4 class="mt-2.5 text-sm font-semibold text-gray-900">{{ $langkah['label'] }}</h4>
+                    <p class="mt-1 text-xs leading-relaxed text-gray-500">{{ $langkah['desc'] }}</p>
+
+                    <p class="mt-2.5 text-[11px] font-semibold uppercase tracking-wide text-primary">{{ $langkah['tag'] }}</p>
+                </div>
+            @endforeach
+        </div>
     </div>
 </section>

@@ -29,7 +29,7 @@ class HomeController extends Controller
             ->services()
             ->published()
             ->ordered()
-            ->with('workUnit')
+            ->with(['workUnit', 'fields' => fn ($query) => $query->where('type', 'document')])
             ->get();
 
         // Nomor kartu tetap global walau beranda hanya menampilkan enam teratas.

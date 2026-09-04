@@ -208,6 +208,47 @@ function initGalleryLightbox() {
     });
 }
 
+// Modal "Rincian Layanan" pada kartu katalog (beranda & /layanan). Konten sudah
+// dirender server-side per kartu di <template data-layanan-template> dan di-clone
+// ke modal saat dibuka -- tanpa request tambahan, jadi terasa instan/smooth.
+// Markup: partials/service-card.blade.php (pemicu) + layouts/app.blade.php (modal).
+function initLayananModal() {
+    const modal = document.querySelector('[data-layanan-modal]');
+    if (!modal) return;
+
+    const content = modal.querySelector('[data-layanan-content]');
+
+    function open(templateId) {
+        const template = document.getElementById(templateId);
+        if (!template) return;
+
+        content.innerHTML = '';
+        content.appendChild(template.content.cloneNode(true));
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+        document.body.classList.add('overflow-hidden');
+    }
+
+    function close() {
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+        content.innerHTML = '';
+        document.body.classList.remove('overflow-hidden');
+    }
+
+    document.querySelectorAll('[data-layanan-detail]').forEach((btn) => {
+        btn.addEventListener('click', () => open(btn.dataset.target));
+    });
+
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) close();
+    });
+    modal.querySelector('[data-layanan-close]')?.addEventListener('click', close);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
+    });
+}
+
 // Area unggah berkas (dropzone) pada formulir pengajuan PTSP: tarik-lepas +
 // umpan balik nama berkas setelah dipilih. Markup: partials/field-input.blade.php.
 // Tanpa umpan balik, pemohon tidak yakin berkasnya benar-benar terpilih.
@@ -307,6 +348,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCountUp();
     initReveal();
     initGalleryLightbox();
+    initLayananModal();
     initDropzones();
     initFormLocking();
     initCopyButtons();

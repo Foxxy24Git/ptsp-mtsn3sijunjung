@@ -18,57 +18,59 @@
                 <input id="website" type="text" name="website" tabindex="-1" autocomplete="off">
             </div>
 
-            <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
-                <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 pb-3">
-                    <h2 class="flex items-center gap-2 text-base font-bold text-gray-900">
-                        <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
-                        </svg>
-                        Identitas &amp; Kontak Pemohon
-                    </h2>
-                    <p class="text-xs text-red-500">* Wajib diisi dengan benar</p>
-                </div>
-
-                <div class="mt-4 grid gap-4 sm:grid-cols-2">
-                    <div>
-                        <label for="applicant_name" class="block text-sm font-medium text-gray-700">
-                            Nama Lengkap Pemohon <span class="text-red-500">*</span>
-                        </label>
-                        <input id="applicant_name" type="text" name="applicant_name" value="{{ old('applicant_name') }}" required
-                               placeholder="Ketik nama lengkap sesuai KTP"
-                               class="mt-1.5 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary">
-                        @error('applicant_name')<p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>@enderror
+            @if ($layanan->requires_applicant_identity)
+                <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
+                    <div class="flex flex-wrap items-center justify-between gap-2 border-b border-gray-200 pb-3">
+                        <h2 class="flex items-center gap-2 text-base font-bold text-gray-900">
+                            <svg class="h-5 w-5 text-primary" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M15 9h3.75M15 12h3.75M15 15h3.75M4.5 19.5h15a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25v10.5A2.25 2.25 0 004.5 19.5zm6-10.125a1.875 1.875 0 11-3.75 0 1.875 1.875 0 013.75 0zm1.294 6.336a6.721 6.721 0 01-3.17.789 6.721 6.721 0 01-3.168-.789 3.376 3.376 0 016.338 0z" />
+                            </svg>
+                            Identitas &amp; Kontak Pemohon
+                        </h2>
+                        <p class="text-xs text-red-500">* Wajib diisi dengan benar</p>
                     </div>
 
-                    <div>
-                        <label for="layanan_dituju" class="block text-sm font-medium text-gray-700">Layanan yang Dituju</label>
-                        <input id="layanan_dituju" type="text" value="{{ $layanan->title }}" readonly
-                               class="mt-1.5 block w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 font-medium text-primary">
-                    </div>
+                    <div class="mt-4 grid gap-4 sm:grid-cols-2">
+                        <div>
+                            <label for="applicant_name" class="block text-sm font-medium text-gray-700">
+                                Nama Lengkap Pemohon <span class="text-red-500">*</span>
+                            </label>
+                            <input id="applicant_name" type="text" name="applicant_name" value="{{ old('applicant_name') }}" required
+                                   placeholder="Ketik nama lengkap sesuai KTP"
+                                   class="mt-1.5 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary">
+                            @error('applicant_name')<p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>@enderror
+                        </div>
 
-                    <div>
-                        <label for="applicant_whatsapp" class="block text-sm font-medium text-gray-700">
-                            Nomor WhatsApp / HP Aktif <span class="text-red-500">*</span>
-                        </label>
-                        <input id="applicant_whatsapp" type="tel" name="applicant_whatsapp" value="{{ old('applicant_whatsapp') }}" required
-                               placeholder="Contoh: 081234567890"
-                               class="mt-1.5 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary">
-                        <p class="mt-1 text-xs text-gray-500">Untuk koordinasi &amp; verifikasi saat melacak permohonan.</p>
-                        @error('applicant_whatsapp')<p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>@enderror
-                    </div>
+                        <div>
+                            <label for="layanan_dituju" class="block text-sm font-medium text-gray-700">Layanan yang Dituju</label>
+                            <input id="layanan_dituju" type="text" value="{{ $layanan->title }}" readonly
+                                   class="mt-1.5 block w-full rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 font-medium text-primary">
+                        </div>
 
-                    <div>
-                        <label for="applicant_email" class="block text-sm font-medium text-gray-700">
-                            Alamat Email Aktif <span class="text-red-500">*</span>
-                        </label>
-                        <input id="applicant_email" type="email" name="applicant_email" value="{{ old('applicant_email') }}" required
-                               placeholder="Contoh: nama@gmail.com"
-                               class="mt-1.5 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary">
-                        <p class="mt-1 text-xs text-gray-500">Dipakai bila petugas perlu menghubungi Anda.</p>
-                        @error('applicant_email')<p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>@enderror
+                        <div>
+                            <label for="applicant_whatsapp" class="block text-sm font-medium text-gray-700">
+                                Nomor WhatsApp / HP Aktif <span class="text-red-500">*</span>
+                            </label>
+                            <input id="applicant_whatsapp" type="tel" name="applicant_whatsapp" value="{{ old('applicant_whatsapp') }}" required
+                                   placeholder="Contoh: 081234567890"
+                                   class="mt-1.5 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary">
+                            <p class="mt-1 text-xs text-gray-500">Untuk koordinasi &amp; verifikasi saat melacak permohonan.</p>
+                            @error('applicant_whatsapp')<p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>@enderror
+                        </div>
+
+                        <div>
+                            <label for="applicant_email" class="block text-sm font-medium text-gray-700">
+                                Alamat Email Aktif <span class="text-red-500">*</span>
+                            </label>
+                            <input id="applicant_email" type="email" name="applicant_email" value="{{ old('applicant_email') }}" required
+                                   placeholder="Contoh: nama@gmail.com"
+                                   class="mt-1.5 block w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 shadow-sm focus:border-primary focus:ring-1 focus:ring-primary">
+                            <p class="mt-1 text-xs text-gray-500">Dipakai bila petugas perlu menghubungi Anda.</p>
+                            @error('applicant_email')<p class="mt-1.5 text-xs font-medium text-red-600">{{ $message }}</p>@enderror
+                        </div>
                     </div>
-                </div>
-            </section>
+                </section>
+            @endif
 
             @if ($layanan->fields->isNotEmpty())
                 <section class="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">

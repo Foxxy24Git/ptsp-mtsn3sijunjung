@@ -4,6 +4,7 @@ namespace App\Support;
 
 use App\Models\Form;
 use App\Models\FormField;
+use App\Models\Kelas;
 use Illuminate\Validation\Rule;
 
 /**
@@ -23,11 +24,21 @@ class DynamicFieldRules
         $rules = [];
 
         foreach ($form->fields as $field) {
+            // Tipe 'document': berkas yang diunggah admin untuk diunduh pengaju,
+            // bukan isian -- tidak pernah dikirim balik lewat request, jadi tidak
+            // divalidasi sama sekali.
+            if ($field->type === 'document') {
+                continue;
+            }
+
             $key = self::key($field);
             $wajib = $field->required ? 'required' : 'nullable';
 
             $rules[$key] = match ($field->type) {
                 'select' => [$wajib, Rule::in($field->options ?? [])],
+                // Tipe 'kelas': pilihan datang dari tabel referensi `kelas`
+                // (menu Data Kelas), bukan dari $field->options seperti 'select'.
+                'kelas' => [$wajib, Rule::in(Kelas::orderBy('sort_order')->pluck('name'))],
                 'checkbox' => [$wajib, 'array'],
                 'date' => [$wajib, 'date'],
                 'number' => [$wajib, 'numeric'],
@@ -49,6 +60,10 @@ class DynamicFieldRules
         $attributes = [];
 
         foreach ($form->fields as $field) {
+            if ($field->type === 'document') {
+                continue;
+            }
+
             $attributes[self::key($field)] = $field->label;
         }
 

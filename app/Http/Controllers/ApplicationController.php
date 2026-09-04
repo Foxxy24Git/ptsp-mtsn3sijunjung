@@ -51,10 +51,15 @@ class ApplicationController extends Controller
 
         $form->load('fields');
 
+        // Sebagian layanan dikonfigurasi admin agar tidak meminta identitas
+        // pemohon sama sekali -- lihat toggle "Wajib Isi Identitas & Kontak
+        // Pemohon" di tab Pengaturan.
+        $wajibIdentitas = $form->requires_applicant_identity ? 'required' : 'nullable';
+
         $aturan = array_merge([
-            'applicant_name' => ['required', 'string', 'max:150'],
-            'applicant_whatsapp' => ['required', 'string', 'max:25'],
-            'applicant_email' => ['required', 'email', 'max:150'],
+            'applicant_name' => [$wajibIdentitas, 'string', 'max:150'],
+            'applicant_whatsapp' => [$wajibIdentitas, 'string', 'max:25'],
+            'applicant_email' => [$wajibIdentitas, 'email', 'max:150'],
         ], DynamicFieldRules::rules($form));
 
         $atribut = array_merge([
@@ -65,11 +70,14 @@ class ApplicationController extends Controller
 
         $validated = $request->validate($aturan, [], $atribut);
 
-        $nomor = WhatsappNumber::normalize($validated['applicant_whatsapp']);
-        if (strlen($nomor) < 10 || strlen($nomor) > 15) {
-            throw ValidationException::withMessages([
-                'applicant_whatsapp' => 'Nomor WhatsApp tidak valid. Contoh penulisan: 081234567890.',
-            ]);
+        $nomor = null;
+        if (filled($validated['applicant_whatsapp'] ?? null)) {
+            $nomor = WhatsappNumber::normalize($validated['applicant_whatsapp']);
+            if (strlen($nomor) < 10 || strlen($nomor) > 15) {
+                throw ValidationException::withMessages([
+                    'applicant_whatsapp' => 'Nomor WhatsApp tidak valid. Contoh penulisan: 081234567890.',
+                ]);
+            }
         }
 
         $this->tolakNilaiDuplikat($form, $validated);
@@ -78,6 +86,12 @@ class ApplicationController extends Controller
             $data = [];
 
             foreach ($form->fields as $field) {
+                // Dokumen unduhan admin, bukan isian pemohon -- tidak ada apa pun
+                // untuk disimpan per pengajuan.
+                if ($field->type === 'document') {
+                    continue;
+                }
+
                 $key = DynamicFieldRules::key($field);
 
                 if ($field->type === 'file') {
@@ -95,9 +109,9 @@ class ApplicationController extends Controller
 
             $permohonan = $form->submissions()->create([
                 'receipt_code' => ReceiptCode::generateUnique(),
-                'applicant_name' => $validated['applicant_name'],
+                'applicant_name' => $validated['applicant_name'] ?? null,
                 'applicant_whatsapp' => $nomor,
-                'applicant_email' => $validated['applicant_email'],
+                'applicant_email' => $validated['applicant_email'] ?? null,
                 'status' => 'diajukan',
                 'data' => $data,
             ]);

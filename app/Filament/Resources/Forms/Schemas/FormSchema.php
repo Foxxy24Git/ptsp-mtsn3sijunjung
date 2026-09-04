@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Forms\Schemas;
 
 use App\Models\FormField;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
@@ -101,6 +102,16 @@ class FormSchema
                                         ->helperText('Ketik lalu Enter untuk tiap pilihan.')
                                         ->visible(fn (Get $get): bool => in_array($get('type'), ['select', 'checkbox']))
                                         ->columnSpanFull(),
+                                    FileUpload::make('document_path')
+                                        ->label('Dokumen untuk Diunduh Pengaju')
+                                        ->disk('public')
+                                        ->directory('layanan-dokumen')
+                                        ->acceptedFileTypes(['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])
+                                        ->maxSize(10240)
+                                        ->helperText('Berkas ini yang bisa diunduh pengaju, baik di modal Rincian maupun di halaman Ajukan. Format PDF/DOC/DOCX, maksimal 10MB.')
+                                        ->visible(fn (Get $get): bool => $get('type') === 'document')
+                                        ->required(fn (Get $get): bool => $get('type') === 'document')
+                                        ->columnSpanFull(),
                                     TextInput::make('help_text')
                                         ->label('Keterangan (opsional)')
                                         ->maxLength(255)
@@ -108,11 +119,13 @@ class FormSchema
                                         ->columnSpanFull(),
                                     Toggle::make('required')
                                         ->label('Wajib diisi')
-                                        ->default(false),
+                                        ->default(false)
+                                        ->visible(fn (Get $get): bool => $get('type') !== 'document'),
                                     Toggle::make('is_unique')
                                         ->label('Tidak boleh duplikat')
                                         ->helperText('Aktifkan untuk isian unik seperti NIS agar satu nilai hanya bisa dipakai sekali.')
-                                        ->default(false),
+                                        ->default(false)
+                                        ->visible(fn (Get $get): bool => $get('type') !== 'document'),
                                 ]),
                         ]),
 
@@ -128,6 +141,11 @@ class FormSchema
                                 ->numeric()
                                 ->default(0)
                                 ->helperText('Menentukan nomor kartu (#1, #2, ...) di katalog.'),
+                            Toggle::make('requires_applicant_identity')
+                                ->label('Wajib Isi Identitas & Kontak Pemohon')
+                                ->helperText('Aktifkan bila formulir Ajukan perlu meminta Nama, WhatsApp & Email pemohon. Nonaktifkan untuk layanan yang tidak memerlukan data ini.')
+                                ->default(true)
+                                ->columnSpanFull(),
                             Textarea::make('success_message')
                                 ->label('Pesan setelah kirim (opsional)')
                                 ->rows(2)

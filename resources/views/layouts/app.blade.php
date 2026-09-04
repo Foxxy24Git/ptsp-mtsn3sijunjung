@@ -210,6 +210,18 @@
         <div class="w-full max-w-4xl" data-gallery-content></div>
     </div>
 
+    {{-- Modal "Rincian Layanan" (dipakai oleh partials/service-card.blade.php).
+         Tombol pemicu: [data-layanan-detail] + <template data-layanan-template>
+         berisi konten yang di-clone ke sini saat dibuka. Logika buka/tutup di app.js. --}}
+    <div id="layanan-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/60 p-4" data-layanan-modal>
+        <div class="relative max-h-[90vh] w-full max-w-xl overflow-y-auto rounded-2xl bg-white shadow-xl" data-layanan-panel>
+            <button type="button" class="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-100 hover:text-gray-700" data-layanan-close aria-label="Tutup">
+                <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <div class="p-6 sm:p-7" data-layanan-content></div>
+        </div>
+    </div>
+
     @stack('scripts')
 </body>
 </html>
