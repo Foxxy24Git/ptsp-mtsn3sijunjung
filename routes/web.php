@@ -6,6 +6,7 @@ use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PageController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\SatisfactionController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\SubmissionFileController;
 use App\Http\Controllers\TrackingController;
@@ -34,6 +35,13 @@ Route::post('/layanan/{form:slug}/ajukan', [ApplicationController::class, 'store
 
 Route::get('/permohonan/selesai', [ApplicationController::class, 'selesai'])->name('permohonan.selesai');
 
+// Survei Kepuasan Layanan. Slug survei ditempel ke menu navigasi lewat
+// tipe menu "kepuasan"; harus di atas catch-all halaman statis.
+Route::get('/kepuasan/{survey:slug}', [SatisfactionController::class, 'show'])->name('kepuasan.show');
+Route::post('/kepuasan/{survey:slug}', [SatisfactionController::class, 'store'])
+    ->middleware('throttle:5,60')
+    ->name('kepuasan.kirim');
+
 Route::get('/lacak', [TrackingController::class, 'index'])->name('lacak.index');
 Route::post('/lacak', [TrackingController::class, 'cari'])
     ->middleware('throttle:10,1')
@@ -47,5 +55,5 @@ Route::get('/permohonan/{submission}/berkas/{field}', [SubmissionFileController:
 // "permohonan" agar tidak pernah menutupi panel Filament / health check /
 // rute PTSP, apa pun urutan registrasi rutenya.
 Route::get('/{page:slug}', [PageController::class, 'show'])
-    ->where('page', '(?!admin$|up$|form$|layanan$|lacak$|permohonan$)[A-Za-z0-9._-]+')
+    ->where('page', '(?!admin$|up$|form$|layanan$|lacak$|permohonan$|kepuasan$)[A-Za-z0-9._-]+')
     ->name('pages.show');

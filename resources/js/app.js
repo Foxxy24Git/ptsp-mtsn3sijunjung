@@ -343,6 +343,59 @@ function initCopyButtons() {
     });
 }
 
+// Survei Kepuasan Layanan: wajah bereaksi seketika saat slider digeser
+// (warna track thumb, skala wajah aktif, dan teks label ikut berubah mengikuti
+// jari). Markup: partials/kepuasan-aspect.blade.php.
+// Tanpa JS, input range bawaan tetap bisa digeser & terkirim; tombol wajah
+// dirender disabled dari server dan baru diaktifkan di sini supaya tidak ada
+// tombol mati yang bisa diklik.
+function initKepuasanSliders() {
+    document.querySelectorAll('[data-kepuasan]').forEach((card) => {
+        const range = card.querySelector('[data-kepuasan-range]');
+        if (!range) return;
+
+        const wadah = card.closest('[data-kepuasan-levels]');
+        let levels = {};
+        try {
+            levels = JSON.parse(wadah?.dataset.kepuasanLevels || '{}');
+        } catch {
+            return; // Data skala rusak: biarkan slider polos, tetap bisa dikirim.
+        }
+
+        const output = card.querySelector('[data-kepuasan-output]');
+        const faces = Array.from(card.querySelectorAll('[data-kepuasan-face]'));
+
+        const render = () => {
+            const info = levels[String(range.value)];
+            if (!info) return;
+
+            card.style.setProperty('--kepuasan-color', info.color);
+            card.style.setProperty('--kepuasan-text', info.text);
+            range.setAttribute('aria-valuetext', info.label);
+            if (output) output.textContent = info.label;
+
+            faces.forEach((face) => {
+                const aktif = face.dataset.kepuasanFace === String(range.value);
+                face.classList.toggle('is-active', aktif);
+                face.setAttribute('aria-pressed', aktif ? 'true' : 'false');
+            });
+        };
+
+        range.addEventListener('input', render);
+        range.addEventListener('change', render);
+
+        faces.forEach((face) => {
+            face.disabled = false;
+            face.addEventListener('click', () => {
+                range.value = face.dataset.kepuasanFace;
+                render();
+            });
+        });
+
+        render();
+    });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('[data-slider]').forEach(initSlider);
     initCountUp();
@@ -352,4 +405,5 @@ document.addEventListener('DOMContentLoaded', () => {
     initDropzones();
     initFormLocking();
     initCopyButtons();
+    initKepuasanSliders();
 });

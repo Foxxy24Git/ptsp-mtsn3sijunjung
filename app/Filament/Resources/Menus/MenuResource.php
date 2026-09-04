@@ -20,6 +20,14 @@ class MenuResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
 
+    /**
+     * Urutan sidebar kelompok tanpa grup: Menus (10) → Pages (20) →
+     * Kepuasan Layanan (30) → Pengaturan Situs (90). Nilainya ditulis
+     * eksplisit supaya urutan tidak bergantung pada urutan penemuan file
+     * oleh Filament.
+     */
+    protected static ?int $navigationSort = 10;
+
     public static function form(Schema $schema): Schema
     {
         return MenuForm::configure($schema);

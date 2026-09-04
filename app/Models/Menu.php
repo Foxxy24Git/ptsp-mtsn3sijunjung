@@ -26,10 +26,11 @@ class Menu extends Model
     /**
      * URL publik untuk item menu ini, berdasarkan type + target.
      *
-     * - page: target = slug halaman  → /{slug}
-     * - post: target = slug berita   → /berita/{slug}
-     * - form: target = slug form     → /form/{slug}
-     * - url : target = URL/path mentah (dipakai apa adanya)
+     * - page:     target = slug halaman        → /{slug}
+     * - post:     target = slug berita         → /berita/{slug}
+     * - form:     target = slug form           → /form/{slug}
+     * - kepuasan: target = slug survei kepuasan → /kepuasan/{slug}
+     * - url :     target = URL/path mentah (dipakai apa adanya)
      */
     public function url(): string
     {
@@ -43,6 +44,7 @@ class Menu extends Model
             'page' => url('/'.ltrim($target, '/')),
             'post' => route('posts.show', $target),
             'form' => route('forms.show', $target),
+            'kepuasan' => route('kepuasan.show', $target),
             default => $target,
         };
     }

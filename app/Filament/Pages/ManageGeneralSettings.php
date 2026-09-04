@@ -22,6 +22,14 @@ class ManageGeneralSettings extends SettingsPage
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog6Tooth;
 
+    /**
+     * Urutan sidebar kelompok tanpa grup: Menus (10) → Pages (20) →
+     * Kepuasan Layanan (30) → Pengaturan Situs (90). Nilainya ditulis
+     * eksplisit supaya urutan tidak bergantung pada urutan penemuan file
+     * oleh Filament.
+     */
+    protected static ?int $navigationSort = 90;
+
     protected static ?string $title = 'Pengaturan Situs';
 
     protected static ?string $navigationLabel = 'Pengaturan Situs';

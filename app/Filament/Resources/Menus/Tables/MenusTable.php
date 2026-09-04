@@ -42,6 +42,8 @@ class MenusTable
                         'page' => 'Page',
                         'post' => 'Post',
                         'url' => 'URL',
+                        'form' => 'Form',
+                        'kepuasan' => 'Kepuasan Layanan',
                     ]),
                 SelectFilter::make('parent_id')
                     ->label('Parent')
