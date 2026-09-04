@@ -2,7 +2,7 @@
 // app/Filament/Resources/Forms/RelationManagers/SubmissionsRelationManager.php
 namespace App\Filament\Resources\Forms\RelationManagers;
 
-use App\Support\FormCsvExporter;
+use App\Support\FormExcelExporter;
 use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ViewAction;
@@ -10,7 +10,7 @@ use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class SubmissionsRelationManager extends RelationManager
 {
@@ -31,9 +31,9 @@ class SubmissionsRelationManager extends RelationManager
             ->defaultSort('created_at', 'desc')
             ->headerActions([
                 Action::make('export')
-                    ->label('Export CSV')
+                    ->label('Export Excel')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->action(fn (): StreamedResponse => FormCsvExporter::download($this->getOwnerRecord())),
+                    ->action(fn (): BinaryFileResponse => FormExcelExporter::download($this->getOwnerRecord())),
             ])
             ->recordActions([
                 ViewAction::make()

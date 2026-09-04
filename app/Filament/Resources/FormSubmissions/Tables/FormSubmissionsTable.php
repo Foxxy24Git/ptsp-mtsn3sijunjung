@@ -4,7 +4,7 @@ namespace App\Filament\Resources\FormSubmissions\Tables;
 
 use App\Actions\UpdateSubmissionStatus;
 use App\Models\FormSubmission;
-use App\Support\FormCsvExporter;
+use App\Support\FormExcelExporter;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
@@ -14,7 +14,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\StreamedResponse;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class FormSubmissionsTable
 {
@@ -92,9 +92,9 @@ class FormSubmissionsTable
             ])
             ->toolbarActions([
                 Action::make('export')
-                    ->label('Export CSV')
+                    ->label('Export Excel')
                     ->icon('heroicon-o-arrow-down-tray')
-                    ->action(fn (): StreamedResponse => FormCsvExporter::downloadAll()),
+                    ->action(fn (): BinaryFileResponse => FormExcelExporter::downloadAll()),
             ]);
     }
 }

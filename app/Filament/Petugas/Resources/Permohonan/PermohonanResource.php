@@ -39,7 +39,7 @@ class PermohonanResource extends Resource
     public static function table(Table $table): Table
     {
         // toolbarActions([]) MENIMPA (bukan menambah) — ini sengaja
-        // menghapus aksi "Export CSV" milik admin dari FormSubmissionsTable
+        // menghapus aksi "Export Excel" milik admin dari FormSubmissionsTable
         // tanpa mengubah class itu sama sekali. Ekspor seluruh data
         // permohonan adalah kebutuhan pelaporan admin, bukan bagian dari
         // "memproses permohonan" yang diminta untuk petugas (spec §2.4).
