@@ -30,12 +30,12 @@ class PetugasPanelAccessTest extends TestCase
         $this->actingAs($petugas)->get('/admin')->assertForbidden();
     }
 
-    public function test_administrator_tetap_bisa_membuka_kedua_panel(): void
+    public function test_admin_tidak_bisa_membuka_panel_petugas(): void
     {
         $admin = User::factory()->create(['role' => User::ROLE_ADMINISTRATOR]);
 
         $this->actingAs($admin)->get('/admin')->assertOk();
-        $this->actingAs($admin)->get('/petugas')->assertOk();
+        $this->actingAs($admin)->get('/petugas')->assertForbidden();
     }
 
     public function test_petugas_melihat_antrian_permohonan(): void

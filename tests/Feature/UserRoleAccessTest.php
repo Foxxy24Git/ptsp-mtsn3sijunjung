@@ -22,12 +22,12 @@ class UserRoleAccessTest extends TestCase
         $this->assertSame('administrator', $user->role);
     }
 
-    public function test_administrator_bisa_akses_panel_admin_dan_petugas(): void
+    public function test_administrator_hanya_bisa_akses_panel_admin(): void
     {
         $admin = User::factory()->create(['role' => User::ROLE_ADMINISTRATOR]);
 
         $this->assertTrue($admin->canAccessPanel(Panel::make()->id('admin')));
-        $this->assertTrue($admin->canAccessPanel(Panel::make()->id('petugas')));
+        $this->assertFalse($admin->canAccessPanel(Panel::make()->id('petugas')));
     }
 
     public function test_petugas_hanya_bisa_akses_panel_petugas(): void

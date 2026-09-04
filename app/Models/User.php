@@ -43,14 +43,15 @@ class User extends Authenticatable implements FilamentUser
     ];
 
     /**
-     * Administrator boleh masuk panel admin maupun petugas (mencakup semua
-     * kemampuan petugas). Petugas hanya boleh masuk panel petugas.
+     * Admin dan petugas dipisah total: masing-masing hanya boleh masuk
+     * panel miliknya sendiri, meski keduanya berbagi guard `web` yang sama.
+     * Tanpa ini, sesi admin otomatis "tembus" ke panel petugas juga.
      */
     public function canAccessPanel(Panel $panel): bool
     {
         return match ($panel->getId()) {
             'admin' => $this->role === self::ROLE_ADMINISTRATOR,
-            'petugas' => in_array($this->role, [self::ROLE_ADMINISTRATOR, self::ROLE_PETUGAS], true),
+            'petugas' => $this->role === self::ROLE_PETUGAS,
             default => false,
         };
     }
