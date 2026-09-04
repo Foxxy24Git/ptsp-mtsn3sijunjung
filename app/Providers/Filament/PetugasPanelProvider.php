@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Auth\Login;
 use App\Filament\Petugas\Pages\Dashboard;
 use App\Http\Middleware\AuthenticatePanel;
+use App\Settings\GeneralSettings;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -28,6 +29,7 @@ class PetugasPanelProvider extends PanelProvider
             ->id('petugas')
             ->path('petugas')
             ->login(Login::class)
+            ->favicon(fn () => app(GeneralSettings::class)->logoUrl())
             ->colors([
                 'primary' => Color::Sky,
             ])

@@ -6,7 +6,6 @@ use App\Http\Responses\LoginResponse;
 use App\Models\Menu;
 use App\Settings\GeneralSettings;
 use Filament\Auth\Http\Responses\Contracts\LoginResponse as LoginResponseContract;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -40,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
 
                 $shared = [
                     'settings' => $settings,
-                    'logoUrl' => $settings->logo ? Storage::disk('public')->url($settings->logo) : null,
+                    'logoUrl' => $settings->logoUrl(),
                     'navMenus' => Menu::query()
                         ->whereNull('parent_id')
                         ->with('children')

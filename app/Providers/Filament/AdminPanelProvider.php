@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Auth\Login;
 use App\Filament\Pages\Dashboard;
 use App\Http\Middleware\AuthenticatePanel;
+use App\Settings\GeneralSettings;
 use Filament\Forms\Components\FileUpload;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -39,6 +40,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login(Login::class)
+            ->favicon(fn () => app(GeneralSettings::class)->logoUrl())
             ->colors([
                 'primary' => Color::Amber,
             ])

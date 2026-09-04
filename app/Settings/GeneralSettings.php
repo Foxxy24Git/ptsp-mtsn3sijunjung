@@ -2,6 +2,7 @@
 
 namespace App\Settings;
 
+use Illuminate\Support\Facades\Storage;
 use Spatie\LaravelSettings\Settings;
 
 class GeneralSettings extends Settings
@@ -114,6 +115,12 @@ class GeneralSettings extends Settings
     public function orderedSections(): array
     {
         return self::normalizeSections($this->home_sections);
+    }
+
+    /** URL logo (disk public), dipakai untuk header/footer situs & favicon tab browser. */
+    public function logoUrl(): ?string
+    {
+        return $this->logo ? Storage::disk('public')->url($this->logo) : null;
     }
 
     public static function group(): string

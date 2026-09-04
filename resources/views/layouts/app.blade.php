@@ -8,6 +8,11 @@
     <title>@hasSection('title')@yield('title') — @endif{{ $settings->site_name }}</title>
     <meta name="description" content="@yield('meta_description', 'Website resmi ' . $settings->site_name)">
 
+    {{-- Ikon tab browser: pakai logo situs kalau sudah di-upload di Pengaturan Situs. --}}
+    @if ($logoUrl)
+        <link rel="icon" href="{{ $logoUrl }}">
+    @endif
+
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     {{-- Warna tema + warna header/footer dari GeneralSettings. Teks header/footer
