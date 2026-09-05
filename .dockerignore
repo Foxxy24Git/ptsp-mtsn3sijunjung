@@ -10,7 +10,6 @@ storage/framework/cache/data/*
 storage/framework/sessions/*
 storage/framework/views/*
 .phpunit.result.cache
-docker
 docker-compose.yml
 .dockerignore
 *.md
