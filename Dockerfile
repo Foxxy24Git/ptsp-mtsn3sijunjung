@@ -4,7 +4,8 @@
 FROM composer:2 AS vendor
 WORKDIR /app
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist \
+        --ignore-platform-req=ext-intl --ignore-platform-req=ext-exif --ignore-platform-req=ext-imagick
 COPY . .
 RUN composer dump-autoload --optimize --no-dev
 
@@ -25,8 +26,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libpng-dev libjpeg62-turbo-dev libfreetype6-dev \
         libicu-dev \
         libmagickwand-dev \
+        libonig-dev \
+        libcurl4-openssl-dev \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install -j"$(nproc)" gd pdo_mysql bcmath zip intl \
+    && docker-php-ext-install -j"$(nproc)" gd pdo_mysql bcmath zip intl exif mbstring curl \
     && pecl install imagick && docker-php-ext-enable imagick \
     && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \
     && rm -rf /var/lib/apt/lists/*
