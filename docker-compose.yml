@@ -1,0 +1,64 @@
+services:
+  app:
+    build:
+      context: .
+      target: app
+    restart: unless-stopped
+    env_file: .env
+    volumes:
+      - storage_public:/var/www/html/storage/app/public
+      - storage_logs:/var/www/html/storage/logs
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - internal
+
+  webserver:
+    build:
+      context: .
+      target: webserver
+    restart: unless-stopped
+    volumes:
+      - storage_public:/var/www/html/public/storage
+    depends_on:
+      - app
+    networks:
+      - internal
+
+  db:
+    image: mysql:8.4
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ${DB_DATABASE}
+      MYSQL_USER: ${DB_USERNAME}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${DB_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - internal
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - webserver
+    networks:
+      - internal
+
+volumes:
+  db_data:
+  storage_public:
+  storage_logs:
+
+networks:
+  internal:
