@@ -17,14 +17,17 @@ class PetugasHeaderLinkTest extends TestCase
             ->assertSee('Masuk Petugas');
     }
 
-    public function test_petugas_yang_sudah_login_melihat_tautan_dashboard_dengan_nama(): void
+    public function test_petugas_yang_sudah_login_melihat_tautan_dashboard_tanpa_nama(): void
     {
+        // Tautan ini cukup ikon saja untuk petugas yang sudah login —
+        // nama tidak lagi ditampilkan sebagai teks, cukup lewat aria-label.
         $petugas = User::factory()->create(['role' => User::ROLE_PETUGAS, 'name' => 'Rina']);
 
         $this->actingAs($petugas)
             ->get('/')
             ->assertOk()
-            ->assertSee('Dashboard Petugas — Rina');
+            ->assertDontSee('Dashboard Petugas — Rina')
+            ->assertSee('aria-label="Dashboard Petugas"', false);
     }
 
     public function test_administrator_yang_login_tetap_melihat_tautan_masuk_petugas(): void
