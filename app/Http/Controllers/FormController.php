@@ -41,7 +41,7 @@ class FormController extends Controller
             $rules[$key] = match ($field->type) {
                 'select' => [$required, Rule::in($field->options ?? [])],
                 'checkbox' => [$required, 'array'],
-                'file' => [$required, 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+                'file' => [$required, 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048'],
                 default => [$required, 'string', 'max:5000'],
             };
 

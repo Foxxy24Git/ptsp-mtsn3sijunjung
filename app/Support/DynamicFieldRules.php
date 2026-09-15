@@ -42,7 +42,7 @@ class DynamicFieldRules
                 'checkbox' => [$wajib, 'array'],
                 'date' => [$wajib, 'date'],
                 'number' => [$wajib, 'numeric'],
-                'file' => [$wajib, 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
+                'file' => [$wajib, 'file', 'mimes:jpg,jpeg,png,pdf', 'max:2048'],
                 default => [$wajib, 'string', 'max:5000'],
             };
 

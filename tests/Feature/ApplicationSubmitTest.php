@@ -92,6 +92,18 @@ class ApplicationSubmitTest extends TestCase
         $this->assertDatabaseCount('form_submissions', 0);
     }
 
+    public function test_berkas_pengajuan_di_atas_dua_mb_ditolak(): void
+    {
+        Storage::fake('local');
+        $fieldBerkas = $this->layanan->fields[1];
+
+        $this->post('/layanan/ijazah-hilang/ajukan', $this->isian([
+            'field_'.$fieldBerkas->id => UploadedFile::fake()->create('surat.pdf', 2049, 'application/pdf'),
+        ]))->assertSessionHasErrors('field_'.$fieldBerkas->id);
+
+        $this->assertDatabaseCount('form_submissions', 0);
+    }
+
     public function test_identitas_yang_kosong_ditolak(): void
     {
         Storage::fake('local');
