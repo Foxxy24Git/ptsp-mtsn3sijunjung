@@ -26,4 +26,24 @@ class SubmissionFileController extends Controller
 
         return Storage::disk('local')->download($path);
     }
+
+    /**
+     * Dokumen hasil kerja petugas (mis. ijazah pengganti). Pengaju tidak
+     * pernah login, jadi penjagaannya bukan Auth::check() seperti di atas,
+     * melainkan middleware `signed`: link hanya valid kalau dibuat oleh
+     * TrackingController setelah verifikasi resi + WA berhasil. Status
+     * dicek ulang di sini (bukan cuma percaya link-nya sah) supaya link
+     * lama otomatis berhenti berfungsi kalau status berubah lagi dari
+     * "selesai".
+     */
+    public function downloadResult(FormSubmission $submission)
+    {
+        abort_unless($submission->status === 'selesai', 404);
+
+        $path = $submission->result_document_path;
+        abort_if(! is_string($path) || $path === '', 404);
+        abort_unless(Storage::disk('local')->exists($path), 404);
+
+        return Storage::disk('local')->download($path, $submission->resultDocumentDownloadName());
+    }
 }

@@ -48,4 +48,15 @@ class UpdateSubmissionStatusTest extends TestCase
 
         app(UpdateSubmissionStatus::class)->handle($this->permohonan(), 'entah-apa');
     }
+
+    public function test_mengubah_status_menyimpan_path_dokumen_hasil(): void
+    {
+        $permohonan = $this->permohonan();
+
+        app(UpdateSubmissionStatus::class)->handle(
+            $permohonan, 'selesai', 'Ijazah siap diambil di TU.', null, 'permohonan/1/hasil/ijazah.pdf'
+        );
+
+        $this->assertSame('permohonan/1/hasil/ijazah.pdf', $permohonan->refresh()->result_document_path);
+    }
 }

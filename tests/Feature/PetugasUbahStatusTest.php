@@ -8,6 +8,8 @@ use App\Models\FormSubmission;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -73,5 +75,54 @@ class PetugasUbahStatusTest extends TestCase
 
         $this->assertSame('ditolak', $permohonan->fresh()->status);
         $this->assertSame('ditolak', $permohonan->statusLogs()->latest('id')->first()->status);
+    }
+
+    public function test_petugas_bisa_upload_dokumen_hasil_saat_selesai(): void
+    {
+        Storage::fake('local');
+
+        $permohonan = $this->permohonan();
+        $petugas = User::factory()->create(['role' => User::ROLE_PETUGAS]);
+
+        $this->actingAs($petugas);
+
+        Livewire::test(ListPermohonan::class)
+            ->callTableAction('ubahStatus', $permohonan, data: [
+                'status' => 'selesai',
+                'admin_note' => 'Ijazah siap diambil di TU.',
+                'result_document' => [UploadedFile::fake()->create('ijazah.pdf', 200, 'application/pdf')],
+            ]);
+
+        $permohonan->refresh();
+        $this->assertSame('selesai', $permohonan->status);
+        $this->assertNotNull($permohonan->result_document_path);
+        Storage::disk('local')->assertExists($permohonan->result_document_path);
+    }
+
+    public function test_dokumen_hasil_tetap_tersimpan_saat_catatan_diedit_ulang(): void
+    {
+        Storage::fake('local');
+
+        $permohonan = $this->permohonan();
+        $petugas = User::factory()->create(['role' => User::ROLE_PETUGAS]);
+        $this->actingAs($petugas);
+
+        Livewire::test(ListPermohonan::class)
+            ->callTableAction('ubahStatus', $permohonan, data: [
+                'status' => 'selesai',
+                'admin_note' => 'Ijazah siap diambil.',
+                'result_document' => [UploadedFile::fake()->create('ijazah.pdf', 200, 'application/pdf')],
+            ]);
+
+        $pathAwal = $permohonan->refresh()->result_document_path;
+        $this->assertNotNull($pathAwal);
+
+        Livewire::test(ListPermohonan::class)
+            ->callTableAction('ubahStatus', $permohonan, data: [
+                'status' => 'selesai',
+                'admin_note' => 'Catatan diperbarui, dokumen sama.',
+            ]);
+
+        $this->assertSame($pathAwal, $permohonan->refresh()->result_document_path);
     }
 }

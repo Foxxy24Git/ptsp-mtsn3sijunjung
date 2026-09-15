@@ -7,8 +7,10 @@ use App\Models\FormSubmission;
 use App\Support\FormExcelExporter;
 use Filament\Actions\Action;
 use Filament\Actions\ViewAction;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -65,18 +67,34 @@ class FormSubmissionsTable
                         Select::make('status')
                             ->label('Status Baru')
                             ->options(FormSubmission::STATUSES)
+                            ->live()
                             ->required(),
                         Textarea::make('admin_note')
                             ->label('Catatan untuk pemohon')
                             ->rows(3)
                             ->helperText('Tampil di halaman lacak, mis. "Ijazah siap diambil di TU".'),
+                        FileUpload::make('result_document')
+                            ->label('Dokumen Hasil (opsional)')
+                            ->disk('local')
+                            ->directory(fn (FormSubmission $record): string => 'permohonan/'.$record->form_id.'/hasil')
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'application/pdf'])
+                            ->maxSize(5120)
+                            ->visible(fn (Get $get): bool => $get('status') === 'selesai')
+                            ->helperText('Muncul untuk diunduh pemohon di halaman lacak begitu status disimpan sebagai Selesai.'),
                     ])
                     ->fillForm(fn (FormSubmission $record): array => [
                         'status' => $record->status,
                         'admin_note' => $record->admin_note,
+                        'result_document' => $record->result_document_path,
                     ])
                     ->action(function (FormSubmission $record, array $data, UpdateSubmissionStatus $updater): void {
-                        $updater->handle($record, $data['status'], $data['admin_note'] ?? null, Auth::id());
+                        $updater->handle(
+                            $record,
+                            $data['status'],
+                            $data['admin_note'] ?? null,
+                            Auth::id(),
+                            $data['result_document'] ?? null,
+                        );
                     }),
                 ViewAction::make()
                     ->label('Detail')

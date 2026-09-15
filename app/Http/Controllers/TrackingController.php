@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\FormSubmission;
 use App\Support\WhatsappNumber;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\URL;
 
 class TrackingController extends Controller
 {
@@ -45,6 +46,13 @@ class TrackingController extends Controller
                 ->withErrors(['receipt_code' => 'Kode resi atau nomor tidak cocok.']);
         }
 
-        return view('lacak.index', ['permohonan' => $permohonan]);
+        $downloadUrl = null;
+        if ($permohonan->status === 'selesai' && filled($permohonan->result_document_path)) {
+            // Dibuat di sini, bukan disimpan -- link baru terbit tiap kali
+            // verifikasi resi+WA berhasil, dan otomatis kadaluarsa.
+            $downloadUrl = URL::temporarySignedRoute('permohonan.hasil', now()->addMinutes(30), ['submission' => $permohonan->id]);
+        }
+
+        return view('lacak.index', ['permohonan' => $permohonan, 'downloadUrl' => $downloadUrl]);
     }
 }

@@ -1,9 +1,11 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
 
 class FormSubmission extends Model
 {
@@ -24,6 +26,7 @@ class FormSubmission extends Model
         'applicant_email',
         'status',
         'admin_note',
+        'result_document_path',
     ];
 
     protected function casts(): array
@@ -51,5 +54,18 @@ class FormSubmission extends Model
             'note' => $note,
             'user_id' => $userId,
         ]);
+    }
+
+    /** Nama file unduhan yang rapi untuk pengaju: judul layanan + kode resi, bukan nama acak dari disk. */
+    public function resultDocumentDownloadName(): ?string
+    {
+        if (! $this->result_document_path) {
+            return null;
+        }
+
+        $ext = pathinfo($this->result_document_path, PATHINFO_EXTENSION);
+        $slug = Str::slug($this->form->title.'-'.$this->receipt_code);
+
+        return $slug.($ext !== '' ? ".{$ext}" : '');
     }
 }

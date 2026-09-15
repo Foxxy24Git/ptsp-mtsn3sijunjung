@@ -122,4 +122,36 @@ class TrackingTest extends TestCase
             'whatsapp_last4' => 'abcd',
         ])->assertSessionHasErrors('whatsapp_last4');
     }
+
+    public function test_tombol_unduh_tampil_saat_status_selesai_dan_ada_dokumen(): void
+    {
+        $permohonan = $this->permohonan();
+        $permohonan->update(['status' => 'selesai', 'result_document_path' => 'permohonan/1/hasil/ijazah.pdf']);
+
+        $this->post('/lacak', [
+            'receipt_code' => 'PTSP-2609-A7K3QX',
+            'whatsapp_last4' => '7890',
+        ])->assertOk()->assertSee('Unduh Dokumen Hasil');
+    }
+
+    public function test_tombol_unduh_tidak_tampil_jika_belum_selesai(): void
+    {
+        $this->permohonan();
+
+        $this->post('/lacak', [
+            'receipt_code' => 'PTSP-2609-A7K3QX',
+            'whatsapp_last4' => '7890',
+        ])->assertOk()->assertDontSee('Unduh Dokumen Hasil');
+    }
+
+    public function test_tombol_unduh_tidak_tampil_jika_status_selesai_tanpa_dokumen(): void
+    {
+        $permohonan = $this->permohonan();
+        $permohonan->update(['status' => 'selesai']);
+
+        $this->post('/lacak', [
+            'receipt_code' => 'PTSP-2609-A7K3QX',
+            'whatsapp_last4' => '7890',
+        ])->assertOk()->assertDontSee('Unduh Dokumen Hasil');
+    }
 }

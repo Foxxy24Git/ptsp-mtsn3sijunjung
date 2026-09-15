@@ -50,6 +50,10 @@ Route::post('/lacak', [TrackingController::class, 'cari'])
 Route::get('/permohonan/{submission}/berkas/{field}', [SubmissionFileController::class, 'download'])
     ->name('permohonan.berkas');
 
+Route::get('/permohonan/{submission}/hasil', [SubmissionFileController::class, 'downloadResult'])
+    ->name('permohonan.hasil')
+    ->middleware('signed');
+
 // Halaman statis by slug (catch-all satu segmen) — WAJIB paling akhir.
 // Regex mengecualikan segmen "admin", "up", "form", "layanan", "lacak", &
 // "permohonan" agar tidak pernah menutupi panel Filament / health check /
